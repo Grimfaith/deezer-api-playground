@@ -5,6 +5,7 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: Helvetica, sans-serif;
 
     h1 {
         color: #5A5B9F;
