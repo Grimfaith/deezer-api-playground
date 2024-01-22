@@ -39,8 +39,11 @@ function loginStatusWindowMessageHandler(event : MessageEvent<any>) : void {
         if (!event.data.message.isLogged) {
             let code = checkQueryParams('code')
             if (code) {
+                // @ts-ignore
                 appLoginStatus.message.code = code;
+                // @ts-ignore
                 appLoginStatus.message.isLogged = true;
+                // @ts-ignore
                 event.source.postMessage(appLoginStatus, window.location.origin);
             }
         } else appLoginStatus = event.data
@@ -54,6 +57,7 @@ function loginStatusWindowMessageHandler(event : MessageEvent<any>) : void {
  * @return {void}
  */
 function loginStepHandler() : void {
+    // @ts-ignore
     let loggedIn = appLoginStatus.message.isLogged || checkQueryParams('code')
     const loginSection = document.querySelector<HTMLElement>('section.login')
 
