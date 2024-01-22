@@ -22,7 +22,19 @@ window.addEventListener("message", (event) => {
     // Skip if the message is not from us
     if (event.origin !== window.location.origin || event.data.originName !== 'DeezerAPG') return
 
-    // Checking login status on query and sending back info
+    loginStatusWindowMessageHandler(event)
+})
+
+document.addEventListener('DOMContentLoaded', () => {
+    loginStepHandler()
+})
+
+/**
+ * Handles the window message received by the login status window
+ *
+ * @param {MessageEvent<any>} event
+ */
+function loginStatusWindowMessageHandler(event : MessageEvent<any>) : void {
     if (event.data.type === 'loginStatus') {
         if (!event.data.message.isLogged) {
             let code = checkQueryParams('code')
@@ -33,9 +45,15 @@ window.addEventListener("message", (event) => {
             }
         } else appLoginStatus = event.data
     }
-})
+}
 
-document.addEventListener('DOMContentLoaded', () => {
+/**
+ * Handles the login step
+ * Checks if the user is logged in or if there are query parameters with code
+ *
+ * @return {void}
+ */
+function loginStepHandler() : void {
     let loggedIn = appLoginStatus.message.isLogged || checkQueryParams('code')
     const loginSection = document.querySelector<HTMLElement>('section.login')
 
@@ -43,16 +61,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (loggedIn) {
             loginSection.innerHTML = `
                 <p style="margin: 0">Connected.. redirection in 2s</p>
-            `;
+            `
         } else {
             const loginButton = loginSection.querySelector<HTMLAnchorElement>('.dz-login')
             if (loginButton) loginButton.addEventListener('click', openDeezerLoginTab)
         }
     }
-})
+}
 
-// Opens a new tab allowing the user
-// to enable the application using their Deezer account
+/**
+ * Opens a Deezer login tab and checks the login status
+ *
+ * @returns {void}
+ */
 function openDeezerLoginTab() : void {
     const authEndpoint = new URL(`${window.location.origin}/dz-login`)
     authEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
@@ -68,7 +89,7 @@ function openDeezerLoginTab() : void {
 }
 
 /**
- * Checks the login status using a timer.
+ * Checks the login status using a timer
  *
  * @returns {void}
  */
