@@ -72,7 +72,10 @@ function loginStepHandler() : void {
             `
         }
 
+        // @ts-ignore
         if (appLoginStatus.message.isLogged) {
+
+
             loginSection.innerHTML = `
                 <p>Great ! You are logged in.</p>
                 <a href="#" class="btn">Logout</a>
@@ -87,7 +90,7 @@ function loginStepHandler() : void {
  * @returns {void}
  */
 function openDeezerLoginTab() : void {
-    const authEndpoint = new URL(`${window.location.origin}/dz-login`)
+    const authEndpoint = new URL(`${window.location.origin}/dz-login/auth`)
     authEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
     authEndpoint.searchParams.set("redirect_uri", window.location.origin)
 
@@ -113,6 +116,32 @@ function checkLoginStatus() : void {
             else loginWindow.postMessage(appLoginStatus, window.location.origin)
         } else clearInterval(checkingStatus)
     }, 1500)
+}
+
+/**
+ * Generates a token.
+ *
+ * @returns {Promise<string | null>}
+ */
+async function generateToken() : Promise<string | null> {
+    let token = null
+    const tokenEndpoint = new URL(`${window.location.origin}/dz-login/token`)
+    tokenEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
+    tokenEndpoint.searchParams.set("secret", app_config.deezer.app_secret_key)
+    tokenEndpoint.searchParams.set("code", appLoginStatus.message.code)
+
+    try {
+        const response = await fetch(tokenEndpoint.toString())
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`)
+        }
+        const data = await response.text()
+        token = data.split('&')[0].split('=')[1]
+    } catch (error) {
+        console.error('Error fetching token : ', error)
+    }
+
+    return token
 }
 
 /**
