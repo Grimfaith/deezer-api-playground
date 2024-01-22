@@ -46,7 +46,10 @@ function loginStatusWindowMessageHandler(event : MessageEvent<any>) : void {
                 // @ts-ignore
                 event.source.postMessage(appLoginStatus, window.location.origin);
             }
-        } else appLoginStatus = event.data
+        } else {
+            appLoginStatus = event.data
+            loginStepHandler()
+        }
     }
 }
 
@@ -57,18 +60,23 @@ function loginStatusWindowMessageHandler(event : MessageEvent<any>) : void {
  * @return {void}
  */
 function loginStepHandler() : void {
-    // @ts-ignore
-    let loggedIn = appLoginStatus.message.isLogged || checkQueryParams('code')
     const loginSection = document.querySelector<HTMLElement>('section.login')
 
     if (loginSection) {
-        if (loggedIn) {
+        const loginButton = loginSection.querySelector<HTMLAnchorElement>('.dz-login')
+        if (loginButton) loginButton.addEventListener('click', openDeezerLoginTab)
+
+        if (checkQueryParams('code')) {
             loginSection.innerHTML = `
                 <p style="margin: 0">Connected.. redirection in 2s</p>
             `
-        } else {
-            const loginButton = loginSection.querySelector<HTMLAnchorElement>('.dz-login')
-            if (loginButton) loginButton.addEventListener('click', openDeezerLoginTab)
+        }
+
+        if (appLoginStatus.message.isLogged) {
+            loginSection.innerHTML = `
+                <p>Great ! You are logged in.</p>
+                <a href="#" class="btn">Logout</a>
+            `
         }
     }
 }
@@ -104,7 +112,7 @@ function checkLoginStatus() : void {
             if (appLoginStatus.message.isLogged) loginWindow.close()
             else loginWindow.postMessage(appLoginStatus, window.location.origin)
         } else clearInterval(checkingStatus)
-    }, 2500)
+    }, 1500)
 }
 
 /**
