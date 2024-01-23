@@ -1,4 +1,10 @@
 namespace DataTypes {
+    interface WindowMessage {
+        originName : 'DeezerAPG'
+        type : string
+        message : any
+    }
+
     interface UserProfile {
         id: number,
         name: string,

@@ -1,13 +1,7 @@
 import './style.css'
 import app_config from './app_config.env.json'
 
-interface IWindowMessage {
-    originName : 'DeezerAPG'
-    type : string
-    message : any
-}
-
-let appLoginStatus : IWindowMessage = {
+let appLoginStatus : DataTypes.WindowMessage = {
     originName : 'DeezerAPG',
     type : 'loginStatus',
     message : {
@@ -147,7 +141,7 @@ async function generateAccessToken() : Promise<string | null> {
  *
  * @returns {Promise<JSON>}
  */
-async function getUserData() : Promise<any> {
+async function getUserData() : Promise<DataTypes.UserProfile> {
     let userData = null
     let token = await generateAccessToken()
     const userEndpoint = new URL(`${window.location.origin}/dz-api/user`)
