@@ -160,7 +160,7 @@ async function generateAccessToken() : Promise<string | null> {
  *
  * @returns {Promise<JSON>}
  */
-async function getUserData() : Promise<JSON> {
+async function getUserData() : Promise<any> {
     let userData = null
     let token = await generateAccessToken()
     const userEndpoint = new URL(`${window.location.origin}/dz-api/user`)
