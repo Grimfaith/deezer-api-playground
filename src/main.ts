@@ -3,8 +3,8 @@ import app_config from './app_config.env.json'
 
 interface IWindowMessage {
     originName : 'DeezerAPG'
-    type : 'loginStatus'
-    message : object
+    type : string
+    message : any
 }
 
 let appLoginStatus : IWindowMessage = {
@@ -26,9 +26,8 @@ let loginWindow : Window | null = null
 
 window.addEventListener("message", (event) => {
     // Skip if the message is not from us
-    if (event.origin !== window.location.origin || event.data.originName !== 'DeezerAPG') return
-
-    loginStatusWindowMessageHandler(event)
+    if (event.origin !== window.location.origin || event.data.originName !== appLoginStatus.originName) return
+    else loginStatusWindowMessageHandler(event)
 })
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -45,15 +44,14 @@ function loginStatusWindowMessageHandler(event : MessageEvent<any>) : void {
         if (!event.data.message.isLogged) {
             let code = checkQueryParams('code')
             if (code) {
-                // @ts-ignore
                 appLoginStatus.message.code = code;
-                // @ts-ignore
                 appLoginStatus.message.isLogged = true;
                 // @ts-ignore
-                event.source.postMessage(appLoginStatus, window.location.origin)
+                event.source.postMessage(appLoginStatus, event.origin)
             }
         } else {
             appLoginStatus = event.data
+            loginWindow?.close()
             loginStepHandler()
         }
     }
@@ -67,26 +65,22 @@ function loginStatusWindowMessageHandler(event : MessageEvent<any>) : void {
  */
 function loginStepHandler() : void {
     const loginSection = document.querySelector<HTMLElement>('section.login')
-
     if (loginSection) {
-        const loginButton = loginSection.querySelector<HTMLAnchorElement>('.dz-login')
-        if (loginButton) loginButton.addEventListener('click', openDeezerLoginTab)
-
-        if (checkQueryParams('code')) {
-            loginSection.innerHTML = `
-                <p style="margin: 0">Connected.. redirection in 2s</p>
-            `
-        }
-
-        // @ts-ignore
         if (appLoginStatus.message.isLogged) {
-            getUserData().then(user => {
-                console.log(user)
+            getUserData().then(userData => {
+                console.log(userData)
                 loginSection.innerHTML = `
-                    <p>Great ${user.firstname} ! you are logged in.</p>
+                    <p>Great ${userData.firstname} ! you are logged in.</p>
                     <a href="#" class="btn" onClick="window.location.reload()">Logout</a>
                 `
             })
+        } else if (checkQueryParams('code')) {
+            loginSection.innerHTML = `
+                <p style="margin: 0">Connected.. redirection in 2s</p>
+            `
+        } else {
+            const loginButton = loginSection.querySelector<HTMLAnchorElement>('.dz-login')
+            loginButton?.addEventListener('click', openDeezerLoginTab)
         }
     }
 }
@@ -107,9 +101,7 @@ function openDeezerLoginTab() : void {
 
     if (loginWindow === null || loginWindow.closed) {
         loginWindow = window.open(authEndpoint, 'DeezerLoginWindow', winFeatures)
-    } else {
-        loginWindow.focus()
-    }
+    } else loginWindow.focus()
 
     checkLoginStatus()
 }
@@ -121,12 +113,9 @@ function openDeezerLoginTab() : void {
  */
 function checkLoginStatus() : void {
     let checkingStatus = setInterval(() => {
-        if (loginWindow) {
-            // @ts-ignore
-            if (appLoginStatus.message.isLogged) loginWindow.close()
-            else loginWindow.postMessage(appLoginStatus, window.location.origin)
-        } else clearInterval(checkingStatus)
-    }, 1500)
+        if (appLoginStatus.message.isLogged) clearInterval(checkingStatus)
+        else loginWindow?.postMessage(appLoginStatus, window.location.origin)
+    }, 2500)
 }
 
 /**
@@ -136,18 +125,14 @@ function checkLoginStatus() : void {
  */
 async function generateAccessToken() : Promise<string | null> {
     let token = null
-
     const tokenEndpoint = new URL(`${window.location.origin}/dz-login/token`)
     tokenEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
     tokenEndpoint.searchParams.set("secret", app_config.deezer.app_secret_key)
-    // @ts-ignore
     tokenEndpoint.searchParams.set("code", appLoginStatus.message.code)
 
     try {
         const response = await fetch(tokenEndpoint.toString())
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`)
-        }
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
         const data = await response.text()
         token = data.split('&')[0].split('=')[1]
     } catch (error) {
@@ -170,12 +155,8 @@ async function getUserData() : Promise<any> {
     if (token) {
         userEndpoint.searchParams.set("access_token", token)
         try {
-            const response = await fetch(userEndpoint.toString(), {
-                credentials: "include"
-            })
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`)
-            }
+            const response = await fetch(userEndpoint.toString())
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
             userData = await response.json()
         } catch (error) {
             console.error('Error fetching user : ', error)
@@ -193,6 +174,6 @@ async function getUserData() : Promise<any> {
  */
 function checkQueryParams (key : string) : string | null {
     let qParams = new URLSearchParams(window.location.search)
-    if(qParams.has(key)) return qParams.get(key)
-    return null
+    if (qParams.has(key)) return qParams.get(key)
+    else return null
 }
