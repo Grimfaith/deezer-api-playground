@@ -1,5 +1,5 @@
 import './style.css'
-import app_config from './app_config.env.json'
+import * as ApiHelper from'./apiHelper'
 
 let appLoginStatus : DataTypes.WindowMessage = {
     originName : 'DeezerAPG',
@@ -8,12 +8,6 @@ let appLoginStatus : DataTypes.WindowMessage = {
         isLogged : false,
         code : "null"
     }
-}
-
-const deezerEndpoints = {
-    login : "https://connect.deezer.com/oauth/auth.php",
-    token : "https://connect.deezer.com/oauth/access_token.php",
-    api : "https://api.deezer.com",
 }
 
 let loginWindow : Window | null = null
@@ -61,7 +55,7 @@ function loginStepHandler() : void {
     const loginSection : HTMLElement | null = document.querySelector<HTMLElement>('section.login')
     if (loginSection) {
         if (appLoginStatus.message.isLogged) {
-            getUserData().then(userData => {
+            ApiHelper.getUserData(appLoginStatus.message.code).then(userData => {
                 console.log(userData)
                 loginSection.innerHTML = `
                     <p>Great ${userData.firstname} ! you are logged in.</p>
@@ -74,30 +68,12 @@ function loginStepHandler() : void {
             `
         } else {
             const loginButton : HTMLAnchorElement | null = loginSection.querySelector<HTMLAnchorElement>('.dz-login')
-            loginButton?.addEventListener('click', openDeezerLoginTab)
+            loginButton?.addEventListener('click', () => {
+                loginWindow = ApiHelper.openLoginWindow(loginWindow)
+                checkLoginStatus()
+            })
         }
     }
-}
-
-/**
- * Opens a Deezer login tab and checks the login status
- *
- * @returns {void}
- */
-function openDeezerLoginTab() : void {
-    const perms : string = "email,offline_access,manage_library"
-    const winFeatures: string = 'left=400,top=250,width=420,height=320'
-
-    const authEndpoint : URL = new URL(deezerEndpoints.login)
-    authEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
-    authEndpoint.searchParams.set("redirect_uri", window.location.origin)
-    authEndpoint.searchParams.set("perms", perms)
-
-    if (loginWindow === null || loginWindow.closed) {
-        loginWindow = window.open(authEndpoint, 'DeezerLoginWindow', winFeatures)
-    } else loginWindow.focus()
-
-    checkLoginStatus()
 }
 
 /**
@@ -110,54 +86,6 @@ function checkLoginStatus() : void {
         if (appLoginStatus.message.isLogged) clearInterval(checkingStatus)
         else loginWindow?.postMessage(appLoginStatus, window.location.origin)
     }, 2500)
-}
-
-/**
- * Generates a token.
- *
- * @returns {Promise<string | null>}
- */
-async function generateAccessToken() : Promise<string | null> {
-    let token = null
-    const tokenEndpoint : URL = new URL(`${window.location.origin}/dz-login/token`)
-    tokenEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
-    tokenEndpoint.searchParams.set("secret", app_config.deezer.app_secret_key)
-    tokenEndpoint.searchParams.set("code", appLoginStatus.message.code)
-
-    try {
-        const response : Response = await fetch(tokenEndpoint.toString())
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
-        const data : string = await response.text()
-        token = data.split('&')[0].split('=')[1]
-    } catch (error) {
-        console.error('Error fetching token : ', error)
-    }
-
-    return token
-}
-
-/**
- * Retrieves user data from the server
- *
- * @returns {Promise<JSON>}
- */
-async function getUserData() : Promise<DataTypes.UserProfile> {
-    let userData = null
-    let token : string | null = await generateAccessToken()
-    const userEndpoint : URL = new URL(`${window.location.origin}/dz-api/user`)
-
-    if (token) {
-        userEndpoint.searchParams.set("access_token", token)
-        try {
-            const response : Response = await fetch(userEndpoint.toString())
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
-            userData = await response.json()
-        } catch (error) {
-            console.error('Error fetching user : ', error)
-        }
-    }
-
-    return userData
 }
 
 /**
