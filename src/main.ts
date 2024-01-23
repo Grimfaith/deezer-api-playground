@@ -97,11 +97,13 @@ function loginStepHandler() : void {
  * @returns {void}
  */
 function openDeezerLoginTab() : void {
+    const perms : string = "email,offline_access,manage_library"
+    const winFeatures: string = 'left=400,top=250,width=420,height=320'
+
     const authEndpoint = new URL(deezerEndpoints.login)
     authEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
     authEndpoint.searchParams.set("redirect_uri", window.location.origin)
-
-    const winFeatures: string = 'left=400,top=250,width=420,height=320'
+    authEndpoint.searchParams.set("perms", perms)
 
     if (loginWindow === null || loginWindow.closed) {
         loginWindow = window.open(authEndpoint, 'DeezerLoginWindow', winFeatures)
