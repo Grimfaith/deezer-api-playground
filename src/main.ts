@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function loginStatusWindowMessageHandler(event : MessageEvent<any>) : void {
     if (event.data.type === 'loginStatus') {
         if (!event.data.message.isLogged) {
-            let code = checkQueryParams('code')
+            let code : string | null = checkQueryParams('code')
             if (code) {
                 appLoginStatus.message.code = code;
                 appLoginStatus.message.isLogged = true;
@@ -58,7 +58,7 @@ function loginStatusWindowMessageHandler(event : MessageEvent<any>) : void {
  * @return {void}
  */
 function loginStepHandler() : void {
-    const loginSection = document.querySelector<HTMLElement>('section.login')
+    const loginSection : HTMLElement | null = document.querySelector<HTMLElement>('section.login')
     if (loginSection) {
         if (appLoginStatus.message.isLogged) {
             getUserData().then(userData => {
@@ -73,7 +73,7 @@ function loginStepHandler() : void {
                 <p style="margin: 0">Connected.. redirection in 2s</p>
             `
         } else {
-            const loginButton = loginSection.querySelector<HTMLAnchorElement>('.dz-login')
+            const loginButton : HTMLAnchorElement | null = loginSection.querySelector<HTMLAnchorElement>('.dz-login')
             loginButton?.addEventListener('click', openDeezerLoginTab)
         }
     }
@@ -88,7 +88,7 @@ function openDeezerLoginTab() : void {
     const perms : string = "email,offline_access,manage_library"
     const winFeatures: string = 'left=400,top=250,width=420,height=320'
 
-    const authEndpoint = new URL(deezerEndpoints.login)
+    const authEndpoint : URL = new URL(deezerEndpoints.login)
     authEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
     authEndpoint.searchParams.set("redirect_uri", window.location.origin)
     authEndpoint.searchParams.set("perms", perms)
@@ -106,7 +106,7 @@ function openDeezerLoginTab() : void {
  * @returns {void}
  */
 function checkLoginStatus() : void {
-    let checkingStatus = setInterval(() => {
+    let checkingStatus : number = setInterval(() => {
         if (appLoginStatus.message.isLogged) clearInterval(checkingStatus)
         else loginWindow?.postMessage(appLoginStatus, window.location.origin)
     }, 2500)
@@ -119,15 +119,15 @@ function checkLoginStatus() : void {
  */
 async function generateAccessToken() : Promise<string | null> {
     let token = null
-    const tokenEndpoint = new URL(`${window.location.origin}/dz-login/token`)
+    const tokenEndpoint : URL = new URL(`${window.location.origin}/dz-login/token`)
     tokenEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
     tokenEndpoint.searchParams.set("secret", app_config.deezer.app_secret_key)
     tokenEndpoint.searchParams.set("code", appLoginStatus.message.code)
 
     try {
-        const response = await fetch(tokenEndpoint.toString())
+        const response : Response = await fetch(tokenEndpoint.toString())
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
-        const data = await response.text()
+        const data : string = await response.text()
         token = data.split('&')[0].split('=')[1]
     } catch (error) {
         console.error('Error fetching token : ', error)
@@ -143,13 +143,13 @@ async function generateAccessToken() : Promise<string | null> {
  */
 async function getUserData() : Promise<DataTypes.UserProfile> {
     let userData = null
-    let token = await generateAccessToken()
-    const userEndpoint = new URL(`${window.location.origin}/dz-api/user`)
+    let token : string | null = await generateAccessToken()
+    const userEndpoint : URL = new URL(`${window.location.origin}/dz-api/user`)
 
     if (token) {
         userEndpoint.searchParams.set("access_token", token)
         try {
-            const response = await fetch(userEndpoint.toString())
+            const response : Response = await fetch(userEndpoint.toString())
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
             userData = await response.json()
         } catch (error) {
@@ -167,7 +167,7 @@ async function getUserData() : Promise<DataTypes.UserProfile> {
  * @returns {(string|null)}
  */
 function checkQueryParams (key : string) : string | null {
-    let qParams = new URLSearchParams(window.location.search)
+    let qParams : URLSearchParams = new URLSearchParams(window.location.search)
     if (qParams.has(key)) return qParams.get(key)
     else return null
 }
