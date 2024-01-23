@@ -1,7 +1,7 @@
 import './style.css'
 import * as ApiHelper from'./apiHelper'
 
-let appLoginStatus : DataTypes.WindowMessage = {
+let appLoginStatus : IWindowMessage = {
     originName : 'DeezerAPG',
     type : 'loginStatus',
     message : {

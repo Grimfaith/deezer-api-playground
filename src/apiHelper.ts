@@ -56,7 +56,7 @@ async function generateAccessToken(code: string) : Promise<string | null> {
  *
  * @returns {Promise<JSON>}
  */
-export async function getUserData(code: string) : Promise<DataTypes.UserProfile> {
+export async function getUserData(code: string) : Promise<IUserProfile> {
     let userData = null
     let token : string | null = await generateAccessToken(code)
     const userEndpoint : URL = new URL(`${window.location.origin}/dz-api/user`)
