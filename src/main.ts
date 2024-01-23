@@ -50,7 +50,7 @@ function loginStatusWindowMessageHandler(event : MessageEvent<any>) : void {
                 // @ts-ignore
                 appLoginStatus.message.isLogged = true;
                 // @ts-ignore
-                event.source.postMessage(appLoginStatus, window.location.origin);
+                event.source.postMessage(appLoginStatus, window.location.origin)
             }
         } else {
             appLoginStatus = event.data
@@ -80,29 +80,13 @@ function loginStepHandler() : void {
 
         // @ts-ignore
         if (appLoginStatus.message.isLogged) {
-            generateToken().then((accessToken) => {
-              if (accessToken) {
-                  const userEndpoint = new URL(`${window.location.origin}/dz-api`)
-                  userEndpoint.searchParams.set("access_token", accessToken)
-
-                  console.log(userEndpoint.toString())
-
-                  fetch(userEndpoint.toString(), {
-                      headers: {
-                          'Authorization': `Bearer ${accessToken}`,
-                      },
-                  }).then(response => {
-                      response.json().then(data => {
-                          console.log(data);
-                      })
-                  })
-              }
+            getUserData().then(user => {
+                console.log(user)
+                loginSection.innerHTML = `
+                    <p>Great ${user.firstname} ! you are logged in.</p>
+                    <a href="#" class="btn" onClick="window.location.reload()">Logout</a>
+                `
             })
-
-            loginSection.innerHTML = `
-                <p>Great ! You are logged in.</p>
-                <a href="#" class="btn">Logout</a>
-            `
         }
     }
 }
@@ -148,8 +132,9 @@ function checkLoginStatus() : void {
  *
  * @returns {Promise<string | null>}
  */
-async function generateToken() : Promise<string | null> {
+async function generateAccessToken() : Promise<string | null> {
     let token = null
+
     const tokenEndpoint = new URL(`${window.location.origin}/dz-login/token`)
     tokenEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
     tokenEndpoint.searchParams.set("secret", app_config.deezer.app_secret_key)
@@ -168,6 +153,34 @@ async function generateToken() : Promise<string | null> {
     }
 
     return token
+}
+
+/**
+ * Retrieves user data from the server
+ *
+ * @returns {Promise<JSON>}
+ */
+async function getUserData() : Promise<JSON> {
+    let userData = null
+    let token = await generateAccessToken()
+    const userEndpoint = new URL(`${window.location.origin}/dz-api/user`)
+
+    if (token) {
+        userEndpoint.searchParams.set("access_token", token)
+        try {
+            const response = await fetch(userEndpoint.toString(), {
+                credentials: "include"
+            })
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`)
+            }
+            userData = await response.json()
+        } catch (error) {
+            console.error('Error fetching user : ', error)
+        }
+    }
+
+    return userData
 }
 
 /**
