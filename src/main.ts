@@ -1,5 +1,6 @@
-import './style.css'
+import * as Utils from'./utils'
 import * as ApiHelper from'./apiHelper'
+import './style.css'
 
 let appLoginStatus : IWindowMessage = {
     originName : 'DeezerAPG',
@@ -30,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function loginStatusWindowMessageHandler(event : MessageEvent<any>) : void {
     if (event.data.type === 'loginStatus') {
         if (!event.data.message.isLogged) {
-            let code : string | null = checkQueryParams('code')
+            let code : string | null = Utils.checkQueryParams('code')
             if (code) {
                 appLoginStatus.message.code = code;
                 appLoginStatus.message.isLogged = true;
@@ -62,7 +63,7 @@ function loginStepHandler() : void {
                     <a href="#" class="btn" onClick="window.location.reload()">Logout</a>
                 `
             })
-        } else if (checkQueryParams('code')) {
+        } else if (Utils.checkQueryParams('code')) {
             loginSection.innerHTML = `
                 <p style="margin: 0">Connected.. redirection in 2s</p>
             `
@@ -86,16 +87,4 @@ function checkLoginStatus() : void {
         if (appLoginStatus.message.isLogged) clearInterval(checkingStatus)
         else loginWindow?.postMessage(appLoginStatus, window.location.origin)
     }, 2500)
-}
-
-/**
- * Checks if the given key exists in the query parameters of the current URL
- *
- * @param {string} key
- * @returns {(string|null)}
- */
-function checkQueryParams (key : string) : string | null {
-    let qParams : URLSearchParams = new URLSearchParams(window.location.search)
-    if (qParams.has(key)) return qParams.get(key)
-    else return null
 }
