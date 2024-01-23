@@ -16,7 +16,13 @@ let appLoginStatus : IWindowMessage = {
     }
 }
 
-let loginWindow: Window | null = null
+const deezerEndpoints = {
+    login : "https://connect.deezer.com/oauth/auth.php",
+    token : "https://connect.deezer.com/oauth/access_token.php",
+    api : "https://api.deezer.com",
+}
+
+let loginWindow : Window | null = null
 
 window.addEventListener("message", (event) => {
     // Skip if the message is not from us
@@ -74,7 +80,24 @@ function loginStepHandler() : void {
 
         // @ts-ignore
         if (appLoginStatus.message.isLogged) {
+            generateToken().then((accessToken) => {
+              if (accessToken) {
+                  const userEndpoint = new URL(`${window.location.origin}/dz-api`)
+                  userEndpoint.searchParams.set("access_token", accessToken)
 
+                  console.log(userEndpoint.toString())
+
+                  fetch(userEndpoint.toString(), {
+                      headers: {
+                          'Authorization': `Bearer ${accessToken}`,
+                      },
+                  }).then(response => {
+                      response.json().then(data => {
+                          console.log(data);
+                      })
+                  })
+              }
+            })
 
             loginSection.innerHTML = `
                 <p>Great ! You are logged in.</p>
@@ -90,12 +113,14 @@ function loginStepHandler() : void {
  * @returns {void}
  */
 function openDeezerLoginTab() : void {
-    const authEndpoint = new URL(`${window.location.origin}/dz-login/auth`)
+    const authEndpoint = new URL(deezerEndpoints.login)
     authEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
     authEndpoint.searchParams.set("redirect_uri", window.location.origin)
 
+    const winFeatures: string = 'left=400,top=250,width=420,height=320'
+
     if (loginWindow === null || loginWindow.closed) {
-        loginWindow = window.open(authEndpoint.toString(), 'DeezerLoginWindow')
+        loginWindow = window.open(authEndpoint, 'DeezerLoginWindow', winFeatures)
     } else {
         loginWindow.focus()
     }
@@ -128,6 +153,7 @@ async function generateToken() : Promise<string | null> {
     const tokenEndpoint = new URL(`${window.location.origin}/dz-login/token`)
     tokenEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
     tokenEndpoint.searchParams.set("secret", app_config.deezer.app_secret_key)
+    // @ts-ignore
     tokenEndpoint.searchParams.set("code", appLoginStatus.message.code)
 
     try {
