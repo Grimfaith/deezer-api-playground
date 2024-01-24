@@ -5,7 +5,7 @@
  * @returns {(string|null)}
  */
 export function checkQueryParams (key : string) : string | null {
-    let qParams : URLSearchParams = new URLSearchParams(window.location.search)
-    if (qParams.has(key)) return qParams.get(key)
+    let params : URLSearchParams = new URLSearchParams(window.location.search)
+    if (params.has(key)) return params.get(key)
     else return null
 }
