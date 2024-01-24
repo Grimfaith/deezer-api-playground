@@ -1,11 +1,9 @@
-interface IWindowMessage {
-    originName : 'DeezerAPG'
-    type : string
-    message : any
-}
-
-interface IEndpoints {
-    [key: string]
+interface IAppState {
+    name: 'DeezerAPG'
+    loginStatus: {
+        isLogged : boolean,
+        code : string
+    }
 }
 
 interface IUserProfile {

@@ -2,12 +2,11 @@ import * as Utils from'./utils'
 import * as ApiHelper from'./apiHelper'
 import './style.css'
 
-let appLoginStatus : IWindowMessage = {
-    originName : 'DeezerAPG',
-    type : 'loginStatus',
-    message : {
+let appState : IAppState = {
+    name : 'DeezerAPG',
+    loginStatus : {
         isLogged : false,
-        code : "null"
+        code : ''
     }
 }
 
@@ -15,8 +14,8 @@ let loginWindow : Window | null = null
 
 window.addEventListener("message", (event) => {
     // Skip if the message is not from us
-    if (event.origin !== window.location.origin || event.data.originName !== appLoginStatus.originName) return
-    else loginStatusWindowMessageHandler(event)
+    if (event.origin !== window.location.origin || event.data.name !== appState.name) return
+    else if(!appState.loginStatus.isLogged) loginMessageHandler(event)
 })
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,25 +23,24 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 /**
- * Handles the window message received by the login status window
+ * Handles the message events between the main and login window
  *
  * @param {MessageEvent<any>} event
+ * @return {void}
  */
-function loginStatusWindowMessageHandler(event : MessageEvent<any>) : void {
-    if (event.data.type === 'loginStatus') {
-        if (!event.data.message.isLogged) {
-            let code : string | null = Utils.checkQueryParams('code')
-            if (code) {
-                appLoginStatus.message.code = code;
-                appLoginStatus.message.isLogged = true;
-                // @ts-ignore
-                event.source.postMessage(appLoginStatus, event.origin)
-            }
-        } else {
-            appLoginStatus = event.data
-            loginWindow?.close()
-            loginStepHandler()
+function loginMessageHandler(event : MessageEvent<any>) : void {
+    if (!event.data.loginStatus.isLogged) {
+        let code : string | null = Utils.checkQueryParams('code')
+        if (code) {
+            appState.loginStatus.code = code;
+            appState.loginStatus.isLogged = true;
+            // @ts-ignore
+            event.source.postMessage(appState, event.origin)
         }
+    } else {
+        appState.loginStatus = event.data.loginStatus
+        loginWindow?.close()
+        loginStepHandler()
     }
 }
 
@@ -55,8 +53,8 @@ function loginStatusWindowMessageHandler(event : MessageEvent<any>) : void {
 function loginStepHandler() : void {
     const loginSection : HTMLElement | null = document.querySelector<HTMLElement>('section.login')
     if (loginSection) {
-        if (appLoginStatus.message.isLogged) {
-            ApiHelper.getUserData(appLoginStatus.message.code).then(userData => {
+        if (appState.loginStatus.isLogged) {
+            ApiHelper.getUserData(appState.loginStatus.code).then(userData => {
                 console.log(userData)
                 loginSection.innerHTML = `
                     <p>Great ${userData.firstname} ! you are logged in.</p>
@@ -84,7 +82,7 @@ function loginStepHandler() : void {
  */
 function checkLoginStatus() : void {
     let checkingStatus : number = setInterval(() => {
-        if (appLoginStatus.message.isLogged) clearInterval(checkingStatus)
-        else loginWindow?.postMessage(appLoginStatus, window.location.origin)
+        if (appState.loginStatus.isLogged) clearInterval(checkingStatus)
+        else loginWindow?.postMessage(appState, window.location.origin)
     }, 2500)
 }
