@@ -10,7 +10,7 @@ let appState : IAppState = {
     }
 }
 
-let profilSection : HTMLElement | null
+let profileSection : HTMLElement | null
 let loginWindow : Window | null
 
 window.addEventListener("message", (event) => {
@@ -20,8 +20,8 @@ window.addEventListener("message", (event) => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
-    profilSection = document.querySelector<HTMLElement>('section.profile')
-    if (profilSection) initLoginSection()
+    profileSection = document.querySelector<HTMLElement>('section.profile')
+    if (profileSection) initProfileSection()
 })
 
 /**
@@ -41,7 +41,7 @@ function loginMessageHandler(event : MessageEvent<any>) : void {
         }
     } else {
         appState.loginStatus = event.data.loginStatus
-        if (profilSection) updateLoginSection().then(() => loginWindow?.close())
+        if (profileSection) updateProfileSection()
     }
 }
 
@@ -51,13 +51,13 @@ function loginMessageHandler(event : MessageEvent<any>) : void {
  *
  * @return {void}
  */
-function initLoginSection() : void {
+function initProfileSection() : void {
     if (Utils.checkQueryParams('code')) {
-        profilSection!.innerHTML = `
+        profileSection!.innerHTML = `
                 <p style="margin: 0">Connected.. redirection in 2s</p>
             `
     } else {
-        const loginButton : HTMLAnchorElement | null = profilSection!.querySelector<HTMLAnchorElement>('.dz-login')
+        const loginButton : HTMLAnchorElement | null = profileSection!.querySelector<HTMLAnchorElement>('.dz-login')
         loginButton?.addEventListener('click', () => {
             loginWindow = ApiHelper.openLoginWindow(loginWindow)
             checkLoginStatus()
@@ -83,15 +83,42 @@ function checkLoginStatus() : void {
  *
  * @returns {void}
  */
-async function updateLoginSection () : Promise<void> {
-    let userData : IUserProfile | null = await ApiHelper.getUserData(appState.loginStatus.code)
-    if (userData) {
-        profilSection!.innerHTML = `
-            <div class="profile-pic">
-                <img src="${userData.picture}" alt="profile picture">
-            </div>
-            <p>Great ${userData.firstname} ! You are logged in.</p>
-            <a href="#" class="btn" onClick="window.location.reload()">Logout</a>
-        `
-    } else console.log(`Something went wrong, unable to fetch user's datas`)
+function updateProfileSection () : void {
+    ApiHelper.getUserData(appState.loginStatus.code).then(userData => {
+        if (userData) {
+            profileSection!.innerHTML = `
+                <div class="profile-pic">
+                    <img src="${userData.picture}" alt="profile picture">
+                </div>
+                <p>Great ${userData.firstname} ! You are logged in.</p>
+                <a href="#" class="btn" onClick="window.location.reload()">Logout</a>
+            `
+            displayUserFlow(userData.id)
+        } else console.log(`Something went wrong, unable to fetch user's data`)
+    })
+    loginWindow?.close()
+}
+
+function displayUserFlow(userID: number) : void {
+    ApiHelper.getUserFlow(userID).then(flowData => {
+        if (flowData) {
+            const flowContainer = document.createElement('div')
+            flowContainer.style.display = 'flex'
+            flowContainer.style.marginTop = '1rem'
+
+            for (let i = 0; i < 3; i++) {
+                // @ts-ignore
+                const track = flowData.data[i]
+                const trackElement = document.createElement('div')
+                trackElement.innerHTML = `
+                    <img src="${track.album.cover}" alt="album cover">
+                    <p>${track.title} - ${track.artist.name}</p>
+                    <audio controls src="${track.preview}"></audio>
+                `
+                flowContainer.appendChild(trackElement);
+            }
+
+            profileSection!.appendChild(flowContainer);
+        } else console.log(`Something went wrong, unable to fetch user's flow data`);
+    })
 }
