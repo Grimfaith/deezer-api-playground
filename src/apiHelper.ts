@@ -7,9 +7,10 @@ const endpoints = {
 }
 
 /**
- * Opens a Deezer login tab and checks the login status
+ * Opens the login window for Deezer authentication
  *
- * @returns {Window}
+ * @param {Window | null} loginWindow
+ * @returns {Window | null}
  */
 export function openLoginWindow(loginWindow: Window | null) : Window | null {
     const perms : string = "email,offline_access,manage_library"
@@ -20,17 +21,17 @@ export function openLoginWindow(loginWindow: Window | null) : Window | null {
     authEndpoint.searchParams.set("redirect_uri", window.location.origin)
     authEndpoint.searchParams.set("perms", perms)
 
-    if (!loginWindow) {
-        loginWindow = window.open(authEndpoint, 'DeezerLoginWindow', winFeatures)
-    } else loginWindow.focus()
+    if (!loginWindow) loginWindow = window.open(authEndpoint, 'DeezerLoginWindow', winFeatures)
+    else loginWindow.focus()
 
     return loginWindow
 }
 
 /**
- * Generates access token
+ * Generates an access token using the provided user OAuth code
  *
- * @returns {Promise<string | null>}
+ * @param {string} code
+ * @return {Promise<string|null>}
  */
 async function generateAccessToken(code: string) : Promise<string | null> {
     let token = null
@@ -54,9 +55,9 @@ async function generateAccessToken(code: string) : Promise<string | null> {
 /**
  * Retrieves user data from the server
  *
- * @returns {Promise<JSON>}
+ * @returns {Promise<JSON|null>}
  */
-export async function getUserData(code: string) : Promise<IUserProfile> {
+export async function getUserData(code: string) : Promise<IUserProfile | null> {
     let userData = null
     let token : string | null = await generateAccessToken(code)
     const userEndpoint : URL = new URL(`${window.location.origin}/dz-api/user`)

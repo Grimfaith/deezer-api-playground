@@ -83,13 +83,13 @@ function checkLoginStatus() : void {
  *
  * @returns {void}
  */
-function updateLoginSection () : void {
-    loginWindow?.close()
-    ApiHelper.getUserData(appState.loginStatus.code).then(userData => {
-        console.log(userData)
+async function updateLoginSection () : Promise<void> {
+    let userData : IUserProfile | null = await ApiHelper.getUserData(appState.loginStatus.code)
+    if (userData) {
         loginSection!.innerHTML = `
-                    <p>Great ${userData.firstname} ! You are logged in.</p>
-                    <a href="#" class="btn" onClick="window.location.reload()">Logout</a>
-                `
-    })
+            <p>Great ${userData.firstname} ! You are logged in.</p>
+            <a href="#" class="btn" onClick="window.location.reload()">Logout</a>
+        `
+    } else console.log(`Something went wrong, unable to fetch user's datas`)
+    loginWindow?.close()
 }
