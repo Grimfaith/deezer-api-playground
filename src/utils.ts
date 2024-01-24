@@ -6,6 +6,5 @@
  */
 export function checkQueryParams (key : string) : string | null {
     let params : URLSearchParams = new URLSearchParams(window.location.search)
-    if (params.has(key)) return params.get(key)
-    else return null
+    return params.get(key)
 }
