@@ -10,7 +10,7 @@ let appState : IAppState = {
     }
 }
 
-let loginSection : HTMLElement | null
+let profilSection : HTMLElement | null
 let loginWindow : Window | null
 
 window.addEventListener("message", (event) => {
@@ -20,8 +20,8 @@ window.addEventListener("message", (event) => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
-    loginSection = document.querySelector<HTMLElement>('section.login')
-    if (loginSection) initLoginSection()
+    profilSection = document.querySelector<HTMLElement>('section.profile')
+    if (profilSection) initLoginSection()
 })
 
 /**
@@ -41,7 +41,7 @@ function loginMessageHandler(event : MessageEvent<any>) : void {
         }
     } else {
         appState.loginStatus = event.data.loginStatus
-        if (loginSection) updateLoginSection()
+        if (profilSection) updateLoginSection().then(() => loginWindow?.close())
     }
 }
 
@@ -53,11 +53,11 @@ function loginMessageHandler(event : MessageEvent<any>) : void {
  */
 function initLoginSection() : void {
     if (Utils.checkQueryParams('code')) {
-        loginSection!.innerHTML = `
+        profilSection!.innerHTML = `
                 <p style="margin: 0">Connected.. redirection in 2s</p>
             `
     } else {
-        const loginButton : HTMLAnchorElement | null = loginSection!.querySelector<HTMLAnchorElement>('.dz-login')
+        const loginButton : HTMLAnchorElement | null = profilSection!.querySelector<HTMLAnchorElement>('.dz-login')
         loginButton?.addEventListener('click', () => {
             loginWindow = ApiHelper.openLoginWindow(loginWindow)
             checkLoginStatus()
@@ -86,10 +86,12 @@ function checkLoginStatus() : void {
 async function updateLoginSection () : Promise<void> {
     let userData : IUserProfile | null = await ApiHelper.getUserData(appState.loginStatus.code)
     if (userData) {
-        loginSection!.innerHTML = `
+        profilSection!.innerHTML = `
+            <div class="profile-pic">
+                <img src="${userData.picture}" alt="profile picture">
+            </div>
             <p>Great ${userData.firstname} ! You are logged in.</p>
             <a href="#" class="btn" onClick="window.location.reload()">Logout</a>
         `
     } else console.log(`Something went wrong, unable to fetch user's datas`)
-    loginWindow?.close()
 }

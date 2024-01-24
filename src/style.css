@@ -24,10 +24,6 @@ main {
         margin: 0 0 2rem;
     }
 
-    p {
-        margin: 0 0 1rem;
-    }
-
     a {
         text-decoration: none;
 
@@ -49,10 +45,24 @@ main {
         border-radius: 4px;
         box-shadow: rgba(17, 12, 46, 0.15) 0 48px 100px 0;
 
-        &.login {
+        &.profile {
             width: 350px;
             text-align: center;
             padding: 1rem;
+
+            .profile-pic {
+                width: 70px;
+                height: 70px;
+                margin: 0 auto 1em;
+                border-radius: 70px;
+                overflow: hidden;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
         }
     }
 }
