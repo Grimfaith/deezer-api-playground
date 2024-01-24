@@ -13,10 +13,10 @@ export default defineConfig({
                 changeOrigin: true,
                 rewrite: (path: { replace: (arg0: string, arg1: string) => any }) => path.replace('/dz-login/token', '')
             },
-            '/dz-api/user': {
-                target: 'https://api.deezer.com/user/me',
+            '/dz-api/': {
+                target: 'https://api.deezer.com/',
                 changeOrigin: true,
-                rewrite: (path: { replace: (arg0: string, arg1: string) => any }) => path.replace('/dz-api/user', '')
+                rewrite: (path: { replace: (arg0: string, arg1: string) => any }) => path.replace('/dz-api/', '')
             }
         }
     }
