@@ -20,7 +20,7 @@ export function openLoginWindow(loginWindow: Window | null) : Window | null {
     authEndpoint.searchParams.set("redirect_uri", window.location.origin)
     authEndpoint.searchParams.set("perms", perms)
 
-    if (loginWindow === null || loginWindow.closed) {
+    if (!loginWindow) {
         loginWindow = window.open(authEndpoint, 'DeezerLoginWindow', winFeatures)
     } else loginWindow.focus()
 

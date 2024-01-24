@@ -10,7 +10,8 @@ let appState : IAppState = {
     }
 }
 
-let loginWindow : Window | null = null
+let loginSection : HTMLElement | null
+let loginWindow : Window | null
 
 window.addEventListener("message", (event) => {
     // Skip if the message is not from us
@@ -19,7 +20,8 @@ window.addEventListener("message", (event) => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
-    loginStepHandler()
+    loginSection = document.querySelector<HTMLElement>('section.login')
+    if (loginSection) initLoginSection()
 })
 
 /**
@@ -39,8 +41,7 @@ function loginMessageHandler(event : MessageEvent<any>) : void {
         }
     } else {
         appState.loginStatus = event.data.loginStatus
-        loginWindow?.close()
-        loginStepHandler()
+        if (loginSection) updateLoginSection()
     }
 }
 
@@ -50,28 +51,17 @@ function loginMessageHandler(event : MessageEvent<any>) : void {
  *
  * @return {void}
  */
-function loginStepHandler() : void {
-    const loginSection : HTMLElement | null = document.querySelector<HTMLElement>('section.login')
-    if (loginSection) {
-        if (appState.loginStatus.isLogged) {
-            ApiHelper.getUserData(appState.loginStatus.code).then(userData => {
-                console.log(userData)
-                loginSection.innerHTML = `
-                    <p>Great ${userData.firstname} ! you are logged in.</p>
-                    <a href="#" class="btn" onClick="window.location.reload()">Logout</a>
-                `
-            })
-        } else if (Utils.checkQueryParams('code')) {
-            loginSection.innerHTML = `
+function initLoginSection() : void {
+    if (Utils.checkQueryParams('code')) {
+        loginSection!.innerHTML = `
                 <p style="margin: 0">Connected.. redirection in 2s</p>
             `
-        } else {
-            const loginButton : HTMLAnchorElement | null = loginSection.querySelector<HTMLAnchorElement>('.dz-login')
-            loginButton?.addEventListener('click', () => {
-                loginWindow = ApiHelper.openLoginWindow(loginWindow)
-                checkLoginStatus()
-            })
-        }
+    } else {
+        const loginButton : HTMLAnchorElement | null = loginSection!.querySelector<HTMLAnchorElement>('.dz-login')
+        loginButton?.addEventListener('click', () => {
+            loginWindow = ApiHelper.openLoginWindow(loginWindow)
+            checkLoginStatus()
+        })
     }
 }
 
@@ -85,4 +75,21 @@ function checkLoginStatus() : void {
         if (appState.loginStatus.isLogged) clearInterval(checkingStatus)
         else loginWindow?.postMessage(appState, window.location.origin)
     }, 2500)
+}
+
+/**
+ * Updates the login section with the user data
+ * and sets the logout button action
+ *
+ * @returns {void}
+ */
+function updateLoginSection () : void {
+    loginWindow?.close()
+    ApiHelper.getUserData(appState.loginStatus.code).then(userData => {
+        console.log(userData)
+        loginSection!.innerHTML = `
+                    <p>Great ${userData.firstname} ! You are logged in.</p>
+                    <a href="#" class="btn" onClick="window.location.reload()">Logout</a>
+                `
+    })
 }
