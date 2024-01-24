@@ -27,7 +27,7 @@ interface IUserProfile {
     country: string,
     lang: string,
     is_kid: boolean,
-    explicit_content_level: boolean,
-    explicit_content_levels_available: boolean,
+    explicit_content_level: string,
+    explicit_content_levels_available: string[],
     tracklist: string
 }
