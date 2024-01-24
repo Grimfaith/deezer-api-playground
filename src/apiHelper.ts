@@ -90,3 +90,23 @@ export async function getUserFlow(userID: number) : Promise<object | null> {
         return null
     }
 }
+
+/**
+ * Retrieves OEmbed player for a given URL
+ *
+ * @param {string} url
+ * @returns {Promise<object|null>}
+ */
+export async function getOEmbed(url: string) : Promise<object | null> {
+    const oEmbedEndpoint : URL = new URL(`${window.location.origin}/dz-api/oembed`)
+    oEmbedEndpoint.searchParams.set("url", url)
+
+    try {
+        const response : Response = await fetch(oEmbedEndpoint.toString())
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
+        return await response.json()
+    } catch (error) {
+        console.error('Error fetching user flow : ', error)
+        return null
+    }
+}
