@@ -59,7 +59,7 @@ function initProfileSection() : void {
             `
     } else {
         const loginButton : HTMLAnchorElement | null = profileSection!.querySelector<HTMLAnchorElement>('.dz-login')
-        loginButton?.addEventListener('click', () => {
+        loginButton!.addEventListener('click', () => {
             loginWindow = ApiHelper.openLoginWindow(loginWindow)
             checkLoginStatus()
         })
