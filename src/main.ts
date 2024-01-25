@@ -80,7 +80,7 @@ function checkLoginStatus() : void {
 
 /**
  * Updates the login section with the user data
- * and sets the logout button action
+ * and sets the logout and the flow button action
  *
  * @returns {void}
  */
@@ -92,19 +92,52 @@ function updateProfileSection () : void {
                     <img src="${userData.picture}" alt="profile picture">
                 </div>
                 <p>Great ${userData.firstname} ! You are logged in.</p>
-                <a href="#" class="btn" onClick="window.location.reload()">Logout</a>
+                <div class="profile-btn">
+                    <a href="#" class="btn" onClick="window.location.reload()">Logout</a>
+                    <a href="#" class="btn dz-flow">Hide Flow</a>
+                </div>
             `
-            displayUserFlow(userData.id)
+
+            initUserFlow(userData.id)
+            if (flowSection) {
+                const flowButton : HTMLAnchorElement | null = profileSection!.querySelector<HTMLAnchorElement>('.dz-flow')
+                flowButton?.addEventListener('click', () => {
+                    if (flowSection!.style.display === 'none') {
+                        flowSection!.style.display = 'grid'
+                        flowButton.innerText = 'Hide Flow'
+                    } else {
+                        flowSection!.style.display = 'none'
+                        flowButton.innerText = 'Display Flow'
+                    }
+                })
+            }
+
         } else console.log(`Something went wrong, unable to fetch user's data`)
     })
     loginWindow?.close()
 }
 
-function displayUserFlow(userID: number) : void {
+/**
+ * Initializes the user flow
+ *
+ * @param {number} userID - The ID of the user.
+ * @return {void}
+ */
+function initUserFlow(userID: number) : void {
+    flowSection = document.querySelector<HTMLElement>('main section.flow-container')
+
     ApiHelper.getUserFlow(userID).then(flowData => {
-        if (flowData) {
-            flowSection = document.querySelector<HTMLElement>('main section.flow-container')
-            let flowTracks = flowSection!.querySelector<HTMLElement>('.flow-tracks')
+        if (flowData && flowSection) {
+
+            const flowText = document.createElement('p')
+            flowText.append('Here\'s some tracks from your Deezer flow')
+
+            const shuffleFlowBtn = document.createElement('a')
+            shuffleFlowBtn.classList.add('btn')
+            shuffleFlowBtn.innerText = 'Shuffle'
+
+            const flowTracks = document.createElement('div')
+            flowTracks.classList.add('flow-tracks')
 
             for (let i = 0; i < 3; i++) {
                 // @ts-ignore
@@ -116,10 +149,20 @@ function displayUserFlow(userID: number) : void {
                     <img src="${track.album.cover_medium}" alt="album cover">
                     <audio controls src="${track.preview}"></audio>
                 `
-                flowTracks!.appendChild(trackElement);
+                flowTracks.appendChild(trackElement);
             }
 
-            flowSection!.style.display = 'grid'
+            shuffleFlowBtn.addEventListener('click', () => {
+                flowSection!.style.display = 'none'
+                flowSection!.innerHTML = ''
+                initUserFlow(userID)
+            })
+
+            flowSection.appendChild(flowText)
+            flowSection.appendChild(flowTracks)
+            flowSection.appendChild(shuffleFlowBtn)
+            flowSection.style.display = 'grid'
+
         } else console.log(`Something went wrong, unable to fetch user's flow data`);
     })
 }
