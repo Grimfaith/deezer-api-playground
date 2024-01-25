@@ -14,7 +14,7 @@ const endpoints = {
  */
 export function openLoginWindow(loginWindow: Window | null) : Window | null {
     const perms : string = "email,offline_access,manage_library"
-    const winFeatures: string = 'left=400,top=250,width=420,height=320'
+    const winFeatures: string = 'left=400,top=250,width=620,height=320'
 
     const authEndpoint : URL = new URL(endpoints.login)
     authEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
