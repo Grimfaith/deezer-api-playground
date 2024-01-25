@@ -11,6 +11,7 @@ let appState : IAppState = {
 }
 
 let profileSection : HTMLElement | null
+let flowSection : HTMLElement | null
 let loginWindow : Window | null
 
 window.addEventListener("message", (event) => {
@@ -20,7 +21,7 @@ window.addEventListener("message", (event) => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
-    profileSection = document.querySelector<HTMLElement>('section.profile')
+    profileSection = document.querySelector<HTMLElement>('main section.profile')
     if (profileSection) initProfileSection()
 })
 
@@ -102,23 +103,23 @@ function updateProfileSection () : void {
 function displayUserFlow(userID: number) : void {
     ApiHelper.getUserFlow(userID).then(flowData => {
         if (flowData) {
-            const flowContainer = document.createElement('div')
-            flowContainer.style.display = 'flex'
-            flowContainer.style.marginTop = '1rem'
+            flowSection = document.querySelector<HTMLElement>('main section.flow-container')
+            let flowTracks = flowSection!.querySelector<HTMLElement>('.flow-tracks')
 
             for (let i = 0; i < 3; i++) {
                 // @ts-ignore
                 const track = flowData.data[i]
                 const trackElement = document.createElement('div')
+                trackElement.classList.add('flow-track')
+
                 trackElement.innerHTML = `
-                    <img src="${track.album.cover}" alt="album cover">
-                    <p>${track.title} - ${track.artist.name}</p>
+                    <img src="${track.album.cover_medium}" alt="album cover">
                     <audio controls src="${track.preview}"></audio>
                 `
-                flowContainer.appendChild(trackElement);
+                flowTracks!.appendChild(trackElement);
             }
 
-            profileSection!.appendChild(flowContainer);
+            flowSection!.style.display = 'grid'
         } else console.log(`Something went wrong, unable to fetch user's flow data`);
     })
 }
