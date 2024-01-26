@@ -54,3 +54,27 @@ interface IUserFlowTrack {
         tracklist: string
     }
 }
+
+interface IUserPlaylist {
+    id: number,
+    title: string,
+    duration: number,
+    public: boolean,
+    is_love_track: boolean,
+    collaborative: boolean,
+    nb_tracks: number,
+    fans: number,
+    link: string,
+    picture: string,
+    picture_small: string,
+    picture_medium: string,
+    picture_big: string,
+    picture_xl: string,
+    checksum: string,
+    time_add: string,
+    time_mod: string,
+    creator: {
+        id: number,
+        name: string
+    }
+}
