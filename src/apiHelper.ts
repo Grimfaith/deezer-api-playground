@@ -76,9 +76,9 @@ export async function getUserData(code: string) : Promise<IUserProfile | null> {
  * Retrieves the user flow for the specified user ID
  *
  * @param {number} userID
- * @return {Promise<Array<any> | null>}
+ * @return {Promise<Array<IUserFlowTrack> | null>}
  */
-export async function getUserFlow(userID: number) : Promise<Array<any> | null> {
+export async function getUserFlow(userID: number) : Promise<Array<IUserFlowTrack> | null> {
     const flowEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/${userID}/flow`)
 
     try {

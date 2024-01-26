@@ -141,13 +141,13 @@ function initUserFlow(userID: number) : void {
 
             for (let i = 0; i < 3; i++) {
                 // @ts-ignore
-                const track = flowData[i]
+                const flowTrack = flowData[i]
                 const trackElement = document.createElement('div')
                 trackElement.classList.add('flow-track')
 
                 trackElement.innerHTML = `
-                    <img src="${track.album.cover_medium}" alt="album cover">
-                    <audio controls src="${track.preview}"></audio>
+                    <img src="${flowTrack.album.cover_medium}" alt="album cover">
+                    <audio controls src="${flowTrack.preview}"></audio>
                 `
                 flowTracks.appendChild(trackElement);
             }
