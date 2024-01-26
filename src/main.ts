@@ -42,6 +42,7 @@ function loginMessageHandler(event : MessageEvent<any>) : void {
         }
     } else {
         appState.loginStatus = event.data.loginStatus
+        // TODO FETCH THEN STORE ACCESS TOKEN BEFORE INITIATING EACH SECTIONS SEPARATELY
         if (profileSection) updateProfileSection()
     }
 }
@@ -85,6 +86,7 @@ function checkLoginStatus() : void {
  * @returns {void}
  */
 function updateProfileSection () : void {
+    // TODO FETCH THEN STORE ACCESS TOKEN BEFORE INITIATING EACH SECTIONS SEPARATELY
     ApiHelper.getUserData(appState.loginStatus.code).then(userData => {
         if (userData) {
             profileSection!.innerHTML = `
@@ -114,6 +116,10 @@ function updateProfileSection () : void {
 
         } else console.log(`Something went wrong, unable to fetch user's data`)
     })
+
+    // TODO FETCH THEN STORE ACCESS TOKEN BEFORE INITIATING EACH SECTIONS SEPARATELY
+    initUserPlaylists()
+
     loginWindow?.close()
 }
 
@@ -164,5 +170,11 @@ function initUserFlow(userID: number) : void {
             flowSection.style.display = 'grid'
 
         } else console.log(`Something went wrong, unable to fetch user's flow data`);
+    })
+}
+
+function initUserPlaylists() {
+    ApiHelper.getUserPlaylists(appState.loginStatus.code).then(playlists => {
+        console.log(playlists)
     })
 }

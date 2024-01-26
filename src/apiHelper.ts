@@ -51,9 +51,11 @@ async function generateAccessToken(code: string) : Promise<string | null> {
 }
 
 /**
- * Retrieves user data from the server
+ * Retrieves user data
  *
- * @returns {Promise<JSON|null>}
+ * @param {string} code
+ * @return {Promise<IUserProfile | null>}
+ * @throws {Error}
  */
 export async function getUserData(code: string) : Promise<IUserProfile | null> {
     let token : string | null = await generateAccessToken(code)
@@ -77,6 +79,7 @@ export async function getUserData(code: string) : Promise<IUserProfile | null> {
  *
  * @param {number} userID
  * @return {Promise<Array<IUserFlowTrack> | null>}
+ * @throws {Error}
  */
 export async function getUserFlow(userID: number) : Promise<Array<IUserFlowTrack> | null> {
     const flowEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/${userID}/flow`)
@@ -93,10 +96,35 @@ export async function getUserFlow(userID: number) : Promise<Array<IUserFlowTrack
 }
 
 /**
+ * Retrieves user playlists
+ *
+ * @param {string} code
+ * @return {Promise<Array<IUserPlaylist> | null>}
+ * @throws {Error}
+ */
+export async function getUserPlaylists(code: string) : Promise<Array<IUserPlaylist> | null> {
+    let token : string | null = await generateAccessToken(code)
+    const playlistsEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/me/playlists`)
+
+    if (token) {
+        playlistsEndpoint.searchParams.set("access_token", token)
+        try {
+            const response : Response = await fetch(playlistsEndpoint.toString())
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
+            return response.json()
+        } catch (error) {
+            console.error('Error fetching playlists : ', error)
+            return null
+        }
+    } else return null
+}
+
+/**
  * Retrieves OEmbed player for a given URL
  *
  * @param {string} url
  * @returns {Promise<object|null>}
+ * @throws {Error}
  */
 export async function getOEmbed(url: string) : Promise<object | null> {
     const oEmbedEndpoint : URL = new URL(`${window.location.origin}/dz-api/oembed`)
