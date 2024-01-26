@@ -141,7 +141,7 @@ function initUserFlow(userID: number) : void {
 
             for (let i = 0; i < 3; i++) {
                 // @ts-ignore
-                const track = flowData.data[i]
+                const track = flowData[i]
                 const trackElement = document.createElement('div')
                 trackElement.classList.add('flow-track')
 
