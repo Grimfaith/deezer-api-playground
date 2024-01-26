@@ -76,5 +76,7 @@ interface IUserPlaylist {
     creator: {
         id: number,
         name: string
+        tracklist: string,
+        type: "user"
     }
 }
