@@ -76,15 +76,16 @@ export async function getUserData(code: string) : Promise<IUserProfile | null> {
  * Retrieves the user flow for the specified user ID
  *
  * @param {number} userID
- * @return {Promise<object|null>}
+ * @return {Promise<Array<any> | null>}
  */
-export async function getUserFlow(userID: number) : Promise<object | null> {
+export async function getUserFlow(userID: number) : Promise<Array<any> | null> {
     const flowEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/${userID}/flow`)
 
     try {
         const response : Response = await fetch(flowEndpoint.toString())
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
-        return await response.json()
+        let flow =  await response.json()
+        return flow.data
     } catch (error) {
         console.error('Error fetching user flow : ', error)
         return null
