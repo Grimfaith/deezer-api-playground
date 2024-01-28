@@ -6,7 +6,8 @@ let appState : IAppState = {
     name : 'DeezerAPG',
     loginStatus : {
         isLogged : false,
-        code : ''
+        code : null,
+        token : {access_token: '', expires: 0}
     }
 }
 
@@ -33,17 +34,21 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function loginMessageHandler(event : MessageEvent<any>) : void {
     if (!event.data.loginStatus.isLogged) {
-        let code : string | null = Utils.checkQueryParams('code')
+        let code = Utils.checkQueryParams('code')
         if (code) {
-            appState.loginStatus.code = code;
-            appState.loginStatus.isLogged = true;
-            // @ts-ignore
-            event.source.postMessage(appState, event.origin)
+            ApiHelper.generateAccessToken(code).then(token => {
+                if (token) {
+                    appState.loginStatus.isLogged = true
+                    appState.loginStatus.code = code
+                    appState.loginStatus.token = token
+                    // @ts-ignore
+                    event.source.postMessage(appState, event.origin)
+                } else console.log('Failed to get access token with code ' + code)
+            })
         }
     } else {
         appState.loginStatus = event.data.loginStatus
-        // TODO FETCH THEN STORE ACCESS TOKEN BEFORE INITIATING EACH SECTIONS SEPARATELY
-        if (profileSection) updateProfileSection()
+        updateProfileSection(appState.loginStatus.token.access_token)
     }
 }
 
@@ -85,9 +90,8 @@ function checkLoginStatus() : void {
  *
  * @returns {void}
  */
-function updateProfileSection () : void {
-    // TODO FETCH THEN STORE ACCESS TOKEN BEFORE INITIATING EACH SECTIONS SEPARATELY
-    ApiHelper.getUserData(appState.loginStatus.code).then(userData => {
+function updateProfileSection (access_token: string) : void {
+    ApiHelper.getUserData(access_token).then(userData => {
         if (userData) {
             profileSection!.innerHTML = `
                 <div class="profile-pic">
@@ -174,7 +178,7 @@ function initUserFlow(userID: number) : void {
 }
 
 function initUserPlaylists() {
-    ApiHelper.getUserPlaylists(appState.loginStatus.code).then(playlists => {
+    ApiHelper.getUserPlaylists(appState.loginStatus.token.access_token).then(playlists => {
         console.log(playlists)
     })
 }
