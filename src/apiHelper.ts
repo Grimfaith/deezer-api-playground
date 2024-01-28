@@ -33,7 +33,7 @@ export function openLoginWindow(loginWindow: Window | null) : Window | null {
  * @param {string} code
  * @return {Promise<string|null>}
  */
-export async function generateAccessToken(code: string) : Promise<string | null> {
+export async function generateAccessToken(code: string) : Promise<IAccess_Token | null> {
     const tokenEndpoint : URL = new URL(`${window.location.origin}/dz-login/token`)
     tokenEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
     tokenEndpoint.searchParams.set("secret", app_config.deezer.app_secret_key)
@@ -43,8 +43,7 @@ export async function generateAccessToken(code: string) : Promise<string | null>
     try {
         const response : Response = await fetch(tokenEndpoint.toString())
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
-        const data : string = await response.text()
-        return  data.split('&')[0].split('=')[1]
+        return await response.json()
     } catch (error) {
         console.error('Error fetching token : ', error)
         return null
