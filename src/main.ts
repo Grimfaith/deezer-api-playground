@@ -23,6 +23,8 @@ window.addEventListener("message", (event) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     profileSection = document.querySelector<HTMLElement>('main section.profile')
+    flowSection = document.querySelector<HTMLElement>('main section.flow-container')
+
     if (profileSection) initProfileSection()
 })
 
@@ -64,8 +66,8 @@ function initProfileSection() : void {
                 <p style="margin: 0">Connected.. redirection in 2s</p>
             `
     } else {
-        const loginButton : HTMLAnchorElement | null = profileSection!.querySelector<HTMLAnchorElement>('.dz-login')
-        loginButton!.addEventListener('click', () => {
+        const loginButton = profileSection!.querySelector<HTMLAnchorElement>('.dz-login')
+        loginButton?.addEventListener('click', () => {
             loginWindow = ApiHelper.openLoginWindow(loginWindow)
             checkLoginStatus()
         })
@@ -78,7 +80,7 @@ function initProfileSection() : void {
  * @returns {void}
  */
 function checkLoginStatus() : void {
-    let checkingStatus : number = setInterval(() => {
+    let checkingStatus = setInterval(() => {
         if (appState.loginStatus.isLogged) clearInterval(checkingStatus)
         else loginWindow?.postMessage(appState, window.location.origin)
     }, 2500)
@@ -104,25 +106,22 @@ function updateProfileSection (access_token: string) : void {
                 </div>
             `
 
+            const flowButton = profileSection!.querySelector<HTMLAnchorElement>('.dz-flow')
+            flowButton?.addEventListener('click', () => {
+                if (flowSection!.style.display === 'none') {
+                    flowSection!.style.display = 'grid'
+                    flowButton.innerText = 'Hide Flow'
+                } else {
+                    flowSection!.style.display = 'none'
+                    flowButton.innerText = 'Display Flow'
+                }
+            })
+
             initUserFlow(userData.id)
-            if (flowSection) {
-                const flowButton : HTMLAnchorElement | null = profileSection!.querySelector<HTMLAnchorElement>('.dz-flow')
-                flowButton?.addEventListener('click', () => {
-                    if (flowSection!.style.display === 'none') {
-                        flowSection!.style.display = 'grid'
-                        flowButton.innerText = 'Hide Flow'
-                    } else {
-                        flowSection!.style.display = 'none'
-                        flowButton.innerText = 'Display Flow'
-                    }
-                })
-            }
+            initUserPlaylists(access_token)
 
         } else console.log(`Something went wrong, unable to fetch user's data`)
     })
-
-    // TODO FETCH THEN STORE ACCESS TOKEN BEFORE INITIATING EACH SECTIONS SEPARATELY
-    initUserPlaylists()
 
     loginWindow?.close()
 }
@@ -130,12 +129,10 @@ function updateProfileSection (access_token: string) : void {
 /**
  * Initializes the user flow
  *
- * @param {number} userID - The ID of the user.
+ * @param {number} userID
  * @return {void}
  */
 function initUserFlow(userID: number) : void {
-    flowSection = document.querySelector<HTMLElement>('main section.flow-container')
-
     ApiHelper.getUserFlow(userID).then(flowData => {
         if (flowData && flowSection) {
 
@@ -177,8 +174,8 @@ function initUserFlow(userID: number) : void {
     })
 }
 
-function initUserPlaylists() {
-    ApiHelper.getUserPlaylists(appState.loginStatus.token.access_token).then(playlists => {
+function initUserPlaylists(access_token: string) {
+    ApiHelper.getUserPlaylists(access_token).then(playlists => {
         console.log(playlists)
     })
 }
