@@ -1,8 +1,9 @@
 interface IAppState {
     name: 'DeezerAPG'
     loginStatus: {
-        isLogged : boolean,
-        code : string
+        isLogged: boolean,
+        code: string,
+        access_token: string
     }
 }
 
