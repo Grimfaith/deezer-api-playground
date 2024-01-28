@@ -192,6 +192,6 @@ function initUserFlow(userID: number) : void {
 
 function initUserPlaylists(access_token: string) {
     ApiHelper.getUserPlaylists(access_token).then(playlists => {
-        console.log(playlists)
+        playlists?.forEach(p => console.log(p))
     })
 }

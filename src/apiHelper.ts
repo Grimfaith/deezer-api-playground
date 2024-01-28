@@ -107,7 +107,8 @@ export async function getUserPlaylists(access_token: string) : Promise<Array<IUs
     try {
         const response : Response = await fetch(playlistsEndpoint.toString())
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
-        return response.json()
+        let playlists =  await response.json()
+        return playlists.data
     } catch (error) {
         console.error('Error fetching playlists : ', error)
         return null
