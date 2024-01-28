@@ -1,9 +1,14 @@
+interface IAccess_Token {
+    access_token: string,
+    expires: number
+}
+
 interface IAppState {
     name: 'DeezerAPG'
     loginStatus: {
         isLogged: boolean,
-        code: string,
-        access_token: string
+        code: string | null
+        access_token: IAccess_Token | null
     }
 }
 
