@@ -53,16 +53,15 @@ export async function generateAccessToken(code: string) : Promise<IAccess_Token 
 /**
  * Retrieves user data
  *
- * @param {string} code
+ * @param {string} access_token
  * @return {Promise<IUserProfile | null>}
  * @throws {Error}
  */
-export async function getUserData(code: string) : Promise<IUserProfile | null> {
-    let token : string | null = await generateAccessToken(code)
+export async function getUserData(access_token: string) : Promise<IUserProfile | null> {
     const userEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/me`)
 
-    if (token) {
-        userEndpoint.searchParams.set("access_token", token)
+    if (access_token) {
+        userEndpoint.searchParams.set("access_token", access_token)
         try {
             const response : Response = await fetch(userEndpoint.toString())
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
@@ -98,16 +97,15 @@ export async function getUserFlow(userID: number) : Promise<Array<IUserFlowTrack
 /**
  * Retrieves user playlists
  *
- * @param {string} code
+ * @param {string} access_token
  * @return {Promise<Array<IUserPlaylist> | null>}
  * @throws {Error}
  */
-export async function getUserPlaylists(code: string) : Promise<Array<IUserPlaylist> | null> {
-    let token : string | null = await generateAccessToken(code)
+export async function getUserPlaylists(access_token: string) : Promise<Array<IUserPlaylist> | null> {
     const playlistsEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/me/playlists`)
 
-    if (token) {
-        playlistsEndpoint.searchParams.set("access_token", token)
+    if (access_token) {
+        playlistsEndpoint.searchParams.set("access_token", access_token)
         try {
             const response : Response = await fetch(playlistsEndpoint.toString())
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
