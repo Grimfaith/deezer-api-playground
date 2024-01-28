@@ -184,14 +184,39 @@ function initUserFlow(userID: number) : void {
             flowSection.appendChild(flowText)
             flowSection.appendChild(flowTracks)
             flowSection.appendChild(shuffleFlowBtn)
-            mainSection?.appendChild(flowSection)
+            mainSection?.insertBefore(flowSection, profileSection!.nextSibling)
 
         } else console.log(`Something went wrong, unable to fetch user's flow data`);
     })
 }
 
 function initUserPlaylists(access_token: string) {
-    ApiHelper.getUserPlaylists(access_token).then(playlists => {
-        playlists?.forEach(p => console.log(p))
+    ApiHelper.getUserPlaylists(access_token).then(data => {
+        if (data) {
+            const playlistsSection = document.createElement('section')
+            playlistsSection.classList.add('playlists-container')
+
+            const playlistsText = document.createElement('p')
+            playlistsText.append('Click on a playlist to list it tracks')
+
+            const playlists = document.createElement('div')
+            playlists.classList.add('playlists')
+
+            data.forEach(playlist => {
+                const playlistElement = document.createElement('div')
+                playlistElement.classList.add('playlist')
+
+                playlistElement.innerHTML = `
+                    <div class="title">${playlist.title}</div>
+                `
+
+                playlists.append(playlistElement)
+                console.log(playlist)
+            })
+
+            playlistsSection.append(playlistsText)
+            playlistsSection.append(playlists)
+            mainSection?.append(playlistsSection)
+        }
     })
 }
