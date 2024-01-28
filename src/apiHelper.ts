@@ -21,7 +21,7 @@ export function openLoginWindow(loginWindow: Window | null) : Window | null {
     authEndpoint.searchParams.set("redirect_uri", window.location.origin)
     authEndpoint.searchParams.set("perms", perms)
 
-    if (!loginWindow) loginWindow = window.open(authEndpoint, 'DeezerLoginWindow', winFeatures)
+    if (!loginWindow || loginWindow.closed) loginWindow = window.open(authEndpoint, 'DeezerLoginWindow', winFeatures)
     else loginWindow.focus()
 
     return loginWindow
@@ -38,6 +38,7 @@ export async function generateAccessToken(code: string) : Promise<string | null>
     tokenEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
     tokenEndpoint.searchParams.set("secret", app_config.deezer.app_secret_key)
     tokenEndpoint.searchParams.set("code", code)
+    tokenEndpoint.searchParams.set("output", 'json')
 
     try {
         const response : Response = await fetch(tokenEndpoint.toString())
