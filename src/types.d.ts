@@ -8,7 +8,7 @@ interface IAppState {
     loginStatus: {
         isLogged: boolean,
         code: string | null
-        access_token: IAccess_Token | null
+        token: IAccess_Token
     }
 }
 

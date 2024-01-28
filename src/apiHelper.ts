@@ -32,6 +32,7 @@ export function openLoginWindow(loginWindow: Window | null) : Window | null {
  *
  * @param {string} code
  * @return {Promise<string|null>}
+ * @throws {Error}
  */
 export async function generateAccessToken(code: string) : Promise<IAccess_Token | null> {
     const tokenEndpoint : URL = new URL(`${window.location.origin}/dz-login/token`)
@@ -59,18 +60,16 @@ export async function generateAccessToken(code: string) : Promise<IAccess_Token 
  */
 export async function getUserData(access_token: string) : Promise<IUserProfile | null> {
     const userEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/me`)
+    userEndpoint.searchParams.set("access_token", access_token)
 
-    if (access_token) {
-        userEndpoint.searchParams.set("access_token", access_token)
-        try {
-            const response : Response = await fetch(userEndpoint.toString())
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
-            return await response.json()
-        } catch (error) {
-            console.error('Error fetching user : ', error)
-            return null
-        }
-    } else return null
+    try {
+        const response : Response = await fetch(userEndpoint.toString())
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
+        return await response.json()
+    } catch (error) {
+        console.error('Error fetching user data : ', error)
+        return null
+    }
 }
 
 /**
@@ -103,18 +102,16 @@ export async function getUserFlow(userID: number) : Promise<Array<IUserFlowTrack
  */
 export async function getUserPlaylists(access_token: string) : Promise<Array<IUserPlaylist> | null> {
     const playlistsEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/me/playlists`)
+    playlistsEndpoint.searchParams.set("access_token", access_token)
 
-    if (access_token) {
-        playlistsEndpoint.searchParams.set("access_token", access_token)
-        try {
-            const response : Response = await fetch(playlistsEndpoint.toString())
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
-            return response.json()
-        } catch (error) {
-            console.error('Error fetching playlists : ', error)
-            return null
-        }
-    } else return null
+    try {
+        const response : Response = await fetch(playlistsEndpoint.toString())
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
+        return response.json()
+    } catch (error) {
+        console.error('Error fetching playlists : ', error)
+        return null
+    }
 }
 
 /**
