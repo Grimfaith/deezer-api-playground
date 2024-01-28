@@ -33,7 +33,7 @@ export function openLoginWindow(loginWindow: Window | null) : Window | null {
  * @param {string} code
  * @return {Promise<string|null>}
  */
-async function generateAccessToken(code: string) : Promise<string | null> {
+export async function generateAccessToken(code: string) : Promise<string | null> {
     const tokenEndpoint : URL = new URL(`${window.location.origin}/dz-login/token`)
     tokenEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
     tokenEndpoint.searchParams.set("secret", app_config.deezer.app_secret_key)
