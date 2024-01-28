@@ -75,7 +75,7 @@ main {
         }
 
         &.flow-container {
-            display: none;
+            display: grid;
             text-align: center;
             margin-top: 1rem;
             padding: 1rem;

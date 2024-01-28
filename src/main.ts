@@ -11,6 +11,7 @@ let appState : IAppState = {
     }
 }
 
+let mainSection : HTMLElement | null
 let profileSection : HTMLElement | null
 let flowSection : HTMLElement | null
 let loginWindow : Window | null
@@ -22,10 +23,11 @@ window.addEventListener("message", (event) => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
-    profileSection = document.querySelector<HTMLElement>('main section.profile')
-    flowSection = document.querySelector<HTMLElement>('main section.flow-container')
+    mainSection = document.createElement('main')
+    mainSection.innerHTML = `<h1><strong>Deezer</strong> API Playground</h1>`
+    document.body.appendChild(mainSection)
 
-    if (profileSection) initProfileSection()
+    initProfileSection()
 })
 
 /**
@@ -62,11 +64,24 @@ function loginMessageHandler(event : MessageEvent<any>) : void {
  */
 function initProfileSection() : void {
     if (Utils.checkQueryParams('code')) {
-        profileSection!.innerHTML = `
-                <p style="margin: 0">Connected.. redirection in 2s</p>
+        mainSection!.innerHTML = `
+                <h1><strong>Deezer</strong> API Playground</h1>
+                <section class="profile">
+                    <p style="margin: 0">Connected.. redirection in 2s</p>
+                </section>
             `
     } else {
-        const loginButton = profileSection!.querySelector<HTMLAnchorElement>('.dz-login')
+        profileSection = document.createElement('section')
+        profileSection.classList.add('profile')
+        profileSection.innerHTML = `
+            <p>Start by log in</p>
+            <div class="profile-btn">
+                <a href="#" class="btn dz-login">Login</a>
+            </div>
+        `
+        mainSection?.appendChild(profileSection)
+
+        const loginButton = profileSection.querySelector<HTMLAnchorElement>('.dz-login')
         loginButton?.addEventListener('click', () => {
             loginWindow = ApiHelper.openLoginWindow(loginWindow)
             checkLoginStatus()
@@ -134,7 +149,9 @@ function updateProfileSection (access_token: string) : void {
  */
 function initUserFlow(userID: number) : void {
     ApiHelper.getUserFlow(userID).then(flowData => {
-        if (flowData && flowSection) {
+        if (flowData) {
+            flowSection = document.createElement('section')
+            flowSection.classList.add('flow-container')
 
             const flowText = document.createElement('p')
             flowText.append('Here\'s some tracks from your Deezer flow')
@@ -160,15 +177,14 @@ function initUserFlow(userID: number) : void {
             }
 
             shuffleFlowBtn.addEventListener('click', () => {
-                flowSection!.style.display = 'none'
-                flowSection!.innerHTML = ''
+                flowSection?.remove()
                 initUserFlow(userID)
             })
 
             flowSection.appendChild(flowText)
             flowSection.appendChild(flowTracks)
             flowSection.appendChild(shuffleFlowBtn)
-            flowSection.style.display = 'grid'
+            mainSection?.appendChild(flowSection)
 
         } else console.log(`Something went wrong, unable to fetch user's flow data`);
     })
