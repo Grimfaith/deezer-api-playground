@@ -1,5 +1,6 @@
 import * as Utils from'./utils'
 import * as ApiHelper from'./apiHelper'
+import '@fortawesome/fontawesome-free/css/all.css'
 import './style.css'
 
 let appState : IAppState = {
@@ -208,6 +209,9 @@ function initUserPlaylists(access_token: string) {
 
                 playlistElement.innerHTML = `
                     <div class="title">${playlist.title}</div>
+                    <div class="buttons">
+                        <i class="fa-solid fa-file-export"></i>
+                    </div>
                 `
 
                 playlists.append(playlistElement)
