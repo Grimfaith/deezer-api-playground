@@ -197,7 +197,7 @@ function initUserPlaylists(access_token: string) {
             playlistsSection.classList.add('playlists-container')
 
             const playlistsText = document.createElement('p')
-            playlistsText.append('Click on a playlist to list it tracks')
+            playlistsText.append('Click on a playlist to list its tracks')
 
             const playlists = document.createElement('div')
             playlists.classList.add('playlists')
