@@ -209,6 +209,7 @@ function initUserPlaylists(access_token: string) {
 
                 playlistElement.innerHTML = `
                     <div class="title">${playlist.title}</div>
+                    <div class="nb-tracks">${playlist.nb_tracks} tracks</div>
                     <div class="buttons">
                         <a href="${playlist.link}" title="Open in Deezer" target="_blank">
                             <i class="fa-solid fa-square-up-right"></i>
