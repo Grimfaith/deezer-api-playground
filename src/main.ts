@@ -210,8 +210,8 @@ function initUserPlaylists(access_token: string) {
                 playlistElement.innerHTML = `
                     <div class="title">${playlist.title}</div>
                     <div class="buttons">
-                        <i class="fa-solid fa-bars"></i>
-                        <i class="fa-solid fa-file-export"></i>
+                        <i class="fa-solid fa-square-up-right" title="Open in Deezer"></i>
+                        <i class="fa-solid fa-file-csv"></i>
                     </div>
                 `
 
