@@ -210,7 +210,7 @@ function initUserPlaylists(access_token: string) {
                 playlistElement.innerHTML = `
                     <div class="title">${playlist.title}</div>
                     <div class="buttons">
-                         <i class="fa-solid fa-bars"></i>
+                        <i class="fa-solid fa-bars"></i>
                         <i class="fa-solid fa-file-export"></i>
                     </div>
                 `
