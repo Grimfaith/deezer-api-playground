@@ -198,7 +198,7 @@ function initUserPlaylists(access_token: string) {
             playlistsSection.classList.add('playlists-container')
 
             const playlistsText = document.createElement('p')
-            playlistsText.append('Click on a playlist to list its tracks')
+            playlistsText.append('And here\'s your playlists')
 
             const playlists = document.createElement('div')
             playlists.classList.add('playlists')
@@ -210,8 +210,12 @@ function initUserPlaylists(access_token: string) {
                 playlistElement.innerHTML = `
                     <div class="title">${playlist.title}</div>
                     <div class="buttons">
-                        <i class="fa-solid fa-square-up-right" title="Open in Deezer"></i>
-                        <i class="fa-solid fa-file-csv"></i>
+                        <a href="${playlist.link}" title="Open in Deezer" target="_blank">
+                            <i class="fa-solid fa-square-up-right"></i>
+                        </a>
+                        <a href="#">
+                            <i class="fa-solid fa-file-csv" title="Export to CSV"></i>
+                        </a>
                     </div>
                 `
 

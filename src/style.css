@@ -129,7 +129,8 @@ main {
                     }
 
                     .buttons {
-                        i {
+                        a {
+                            color: var(--theme-color);
                             padding: .1rem .5rem;
                             cursor: pointer;
 
