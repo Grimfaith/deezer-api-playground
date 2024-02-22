@@ -17,5 +17,8 @@ export function checkQueryParams (key : string) : string | null {
  */
 export function arrayToCsv (data : string[][]) : string
 {
-    return data.map(row => row.join(',')).join('\n');
+    const csvData = data.map(row => row.join(',')).join('\n')
+    const blob = new Blob([csvData], { type: 'text/csv' })
+    // URL.revokeObjectURL(downloadUrl)
+    return URL.createObjectURL(blob)
 }
