@@ -191,7 +191,7 @@ function initUserFlow(userID: number) : void {
     })
 }
 
-function initUserPlaylists(access_token: string) {
+function initUserPlaylists(access_token: string) : void {
     ApiHelper.getUserPlaylists(access_token).then(data => {
         if (data) {
             const playlistsSection = document.createElement('section')
@@ -207,6 +207,13 @@ function initUserPlaylists(access_token: string) {
                 const playlistElement = document.createElement('div')
                 playlistElement.classList.add('playlist')
 
+                const dataArray = [
+                    ['Title', 'Artist', 'Album'],
+                    ['Panda', 'Itro', 'NCS: Uplifting'],
+                    ['All Too Soon', 'Spektrem', 'All Too Soon'],
+                    ['Force', 'Alan Walker', 'Force'],
+                ];
+
                 playlistElement.innerHTML = `
                     <div class="title">${playlist.title}</div>
                     <div class="nb-tracks">${playlist.nb_tracks} tracks</div>
@@ -214,8 +221,8 @@ function initUserPlaylists(access_token: string) {
                         <a href="${playlist.link}" title="Open in Deezer" target="_blank">
                             <i class="fa-solid fa-square-up-right"></i>
                         </a>
-                        <a href="#">
-                            <i class="fa-solid fa-file-csv" title="Export to CSV"></i>
+                        <a href="${Utils.arrayToCsv(dataArray)}" title="Export to CSV" download="${playlist.title}.csv">
+                            <i class="fa-solid fa-file-csv"></i>
                         </a>
                     </div>
                 `
