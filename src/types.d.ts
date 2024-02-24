@@ -12,7 +12,7 @@ interface IAppState {
     }
 }
 
-interface IUserProfile {
+interface IUser {
     id: number,
     name: string,
     lastname: string,
@@ -34,6 +34,73 @@ interface IUserProfile {
     explicit_content_level: string,
     explicit_content_levels_available: string[],
     tracklist: string
+}
+
+interface IPlaylist {
+    id: number,
+    title: string,
+    duration: number,
+    public: boolean,
+    is_love_track: boolean,
+    collaborative: boolean,
+    nb_tracks: number,
+    fans: number,
+    link: string,
+    picture: string,
+    picture_small: string,
+    picture_medium: string,
+    picture_big: string,
+    picture_xl: string,
+    checksum: string,
+    time_add: string,
+    time_mod: string,
+    creator: IUser
+}
+
+interface IArtist {
+    id: number,
+    name: string,
+    link: string,
+    share: string,
+    picture: string,
+    picture_small: string,
+    picture_medium: string,
+    picture_big: string,
+    picture_xl: string,
+    nb_album: number,
+    nb_fan: number,
+    radio: boolean,
+    tracklist: string,
+}
+
+interface IAlbum {
+    id: number,
+    title: string
+    upc: string,
+    link: string,
+    share: string,
+    cover: string,
+    cover_small: string,
+    cover_medium: string,
+    cover_big: string,
+    cover_xl: string,
+    md5_image: string,
+    genre_id: number,
+    genres: object[],
+    label: string,
+    nb_tracks: number,
+    duration: number,
+    fans: number,
+    release_date: string,
+    record_type: string,
+    available: boolean,
+    alternative: IAlbum,
+    tracklist: string,
+    explicit_lyrics: boolean,
+    explicit_content_lyrics: boolean,
+    explicit_content_cover: boolean,
+    contributors: string[],
+    artist: IArtist
 }
 
 interface ITrack {
@@ -62,58 +129,5 @@ interface ITrack {
     contributors: string[],
     md5_image: string,
     artist: IArtist,
-    album: {
-        id: number,
-        title: string
-        cover: string,
-        cover_small: string,
-        cover_medium: string,
-        cover_big: string,
-        cover_xl: string,
-        md5_image: string,
-        type: "album",
-        tracklist: string
-    }
-}
-
-interface IUserPlaylist {
-    id: number,
-    title: string,
-    duration: number,
-    public: boolean,
-    is_love_track: boolean,
-    collaborative: boolean,
-    nb_tracks: number,
-    fans: number,
-    link: string,
-    picture: string,
-    picture_small: string,
-    picture_medium: string,
-    picture_big: string,
-    picture_xl: string,
-    checksum: string,
-    time_add: string,
-    time_mod: string,
-    creator: {
-        id: number,
-        name: string
-        tracklist: string,
-        type: "user"
-    }
-}
-
-interface IArtist {
-    id: number,
-    name: string,
-    link: string,
-    share: string,
-    picture: string,
-    picture_small: string,
-    picture_medium: string,
-    picture_big: string,
-    picture_xl: string,
-    nb_album: number,
-    nb_fan: number,
-    radio: boolean,
-    tracklist: string,
+    album: IAlbum
 }

@@ -55,10 +55,10 @@ export async function generateAccessToken(code: string) : Promise<IAccess_Token 
  * Retrieves user data
  *
  * @param {string} access_token
- * @return {Promise<IUserProfile | null>}
+ * @return {Promise<IUser | null>}
  * @throws {Error}
  */
-export async function getUserData(access_token: string) : Promise<IUserProfile | null> {
+export async function getUserData(access_token: string) : Promise<IUser | null> {
     const userEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/me`)
     userEndpoint.searchParams.set("access_token", access_token)
 
@@ -97,10 +97,10 @@ export async function getUserFlow(userID: number) : Promise<Array<ITrack> | null
  * Retrieves user playlists
  *
  * @param {string} access_token
- * @return {Promise<Array<IUserPlaylist> | null>}
+ * @return {Promise<Array<IPlaylist> | null>}
  * @throws {Error}
  */
-export async function getUserPlaylists(access_token: string) : Promise<Array<IUserPlaylist> | null> {
+export async function getUserPlaylists(access_token: string) : Promise<Array<IPlaylist> | null> {
     const playlistsEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/me/playlists`)
     playlistsEndpoint.searchParams.set("access_token", access_token)
 
