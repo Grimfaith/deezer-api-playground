@@ -79,7 +79,7 @@ export async function getUserData(access_token: string) : Promise<IUserProfile |
  * @return {Promise<Array<IUserFlowTrack> | null>}
  * @throws {Error}
  */
-export async function getUserFlow(userID: number) : Promise<Array<IUserFlowTrack> | null> {
+export async function getUserFlow(userID: number) : Promise<Array<ITrack> | null> {
     const flowEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/${userID}/flow`)
 
     try {
@@ -114,6 +114,8 @@ export async function getUserPlaylists(access_token: string) : Promise<Array<IUs
         return null
     }
 }
+
+// export function getPlaylistTracks(access_token: string, playlistID: number) : Promise<Array>
 
 /**
  * Retrieves OEmbed player for a given URL

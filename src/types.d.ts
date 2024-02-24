@@ -36,16 +36,31 @@ interface IUserProfile {
     tracklist: string
 }
 
-interface IUserFlowTrack {
+interface ITrack {
     id: number,
     readable: boolean,
     title: string,
     title_short: string,
     title_version: string,
+    unseen: boolean,
+    isrc: string,
+    link: string,
+    share: string,
     duration: number,
-    rank: string,
+    track_position: number,
+    disk_position: number,
+    rank: number,
+    release_date: string,
     explicit_lyrics: boolean,
+    explicit_content_lyrics: number,
+    explicit_content_cover: number,
     preview: string,
+    bpm: number,
+    gain: number,
+    available_countries: string[],
+    alternative: ITrack,
+    contributors: string[],
+    md5_image: string,
     artist: object,
     album: {
         id: number,
