@@ -125,6 +125,7 @@ export async function getUserPlaylists(access_token: string) : Promise<Array<IPl
 export async function getPlaylistTracks(access_token: string, playlistID: number) : Promise<Array<ITrack> | null> {
     const playlistTracksEndpoint : URL = new URL(`${window.location.origin}/dz-api/playlist/${playlistID}/tracks`)
     playlistTracksEndpoint.searchParams.set("access_token", access_token)
+    playlistTracksEndpoint.searchParams.set("limit", "667")
 
     try {
         const response : Response = await fetch(playlistTracksEndpoint.toString())
