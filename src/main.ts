@@ -203,17 +203,21 @@ function initUserPlaylists(access_token: string) : void {
             const playlists = document.createElement('div')
             playlists.classList.add('playlists')
 
-            data.forEach(playlist => {
+            data.forEach(async playlist => {
+                const playlistTracks = await ApiHelper.getPlaylistTracks(access_token, playlist.id)
                 const playlistElement = document.createElement('div')
+                const tracklist = [['Title', 'Artist', 'Album', 'Link']]
+
+                playlistTracks?.forEach(track => {
+                    tracklist.push([
+                        track.title.replace(/,/g, " "),
+                        track.artist.name.replace(/,/g, " "),
+                        track.album.title.replace(/,/g, " "),
+                        track.link
+                    ])
+                })
+
                 playlistElement.classList.add('playlist')
-
-                const dataArray = [
-                    ['Title', 'Artist', 'Album'],
-                    ['Panda', 'Itro', 'NCS: Uplifting'],
-                    ['All Too Soon', 'Spektrem', 'All Too Soon'],
-                    ['Force', 'Alan Walker', 'Force'],
-                ];
-
                 playlistElement.innerHTML = `
                     <div class="title">${playlist.title}</div>
                     <div class="nb-tracks">${playlist.nb_tracks} tracks</div>
@@ -221,14 +225,13 @@ function initUserPlaylists(access_token: string) : void {
                         <a href="${playlist.link}" title="Open in Deezer" target="_blank">
                             <i class="fa-solid fa-square-up-right"></i>
                         </a>
-                        <a href="${Utils.arrayToCsv(dataArray)}" title="Export to CSV" download="${playlist.title}.csv">
+                        <a href="${Utils.arrayToCsv(tracklist)}" title="Export to CSV" download="${playlist.title}.csv">
                             <i class="fa-solid fa-file-csv"></i>
                         </a>
                     </div>
                 `
 
                 playlists.append(playlistElement)
-                console.log(playlist)
             })
 
             playlistsSection.append(playlistsText)
