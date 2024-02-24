@@ -76,7 +76,7 @@ export async function getUserData(access_token: string) : Promise<IUserProfile |
  * Retrieves the user flow for the specified user ID
  *
  * @param {number} userID
- * @return {Promise<Array<IUserFlowTrack> | null>}
+ * @return {Promise<Array<ITrack> | null>}
  * @throws {Error}
  */
 export async function getUserFlow(userID: number) : Promise<Array<ITrack> | null> {
@@ -115,7 +115,27 @@ export async function getUserPlaylists(access_token: string) : Promise<Array<IUs
     }
 }
 
-// export function getPlaylistTracks(access_token: string, playlistID: number) : Promise<Array>
+/**
+ * Retrieves the tracks of a playlist
+ *
+ * @param {string} access_token
+ * @param {number} playlistID
+ * @return {Promise<Array<ITrack> | null>}
+ */
+export async function getPlaylistTracks(access_token: string, playlistID: number) : Promise<Array<ITrack> | null> {
+    const playlistTracksEndpoint : URL = new URL(`${window.location.origin}/dz-api/playlist/${playlistID}/tracks`)
+    playlistTracksEndpoint.searchParams.set("access_token", access_token)
+
+    try {
+        const response : Response = await fetch(playlistTracksEndpoint.toString())
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
+        let tracks =  await response.json()
+        return tracks.data
+    } catch (error) {
+        console.error('Error fetching playlist tracks : ', error)
+        return null
+    }
+}
 
 /**
  * Retrieves OEmbed player for a given URL
