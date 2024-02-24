@@ -225,7 +225,8 @@ function initUserPlaylists(access_token: string) : void {
                         <a href="${playlist.link}" title="Open in Deezer" target="_blank">
                             <i class="fa-solid fa-square-up-right"></i>
                         </a>
-                        <a href="${Utils.arrayToCsv(tracklist)}" title="Export to CSV" download="${playlist.title}.csv">
+                        <a href="${Utils.arrayToCsv(tracklist)}" title="Export to CSV" 
+                            download="${playlist.title}-by-${playlist.creator.name}.csv">
                             <i class="fa-solid fa-file-csv"></i>
                         </a>
                     </div>
