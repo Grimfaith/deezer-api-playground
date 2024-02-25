@@ -14,29 +14,29 @@ Make also sure you have [Node.js](https://nodejs.org/) installed on your machine
 ## Setup
 
 After creating your app on Deezer, you can now fork and clone this repository :
-```shell
+```codeowners 
 git clone https://github.com/Grimfaith/deezer-api-playground.git
 ```
 
 Change directory to the project :
-```shell
+```codeowners
 cd deezer-api-playground
 ```
 
 Run the following command to create a configuration file from the default file :
-```shell
+```codeowners
 mv src/app_config.env.json_ src/app_config.env.json
 ```
 
 Fill the created file with your Deezer app credentials.
 
 Install the dependencies :
-```shell
+```codeowners
 npm install
 ```
 
 Finally, build then serve the generated dist folder : 
-```shell
+```codeowners
 npm run build
 serve dist // require serve package, serve by default at 3000
 OR
