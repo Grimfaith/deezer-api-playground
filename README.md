@@ -16,7 +16,7 @@ Make also sure you have [Node.js](https://nodejs.org/) installed on your machine
 
 After creating your app on Deezer, you can now fork and clone this repository :
 ```codeowners 
-git clone https://github.com/Grimfaith/deezer-api-playground.git
+git clone https://github.com/grimfaith/deezer-api-playground.git
 ```
 
 Change directory to the project :
