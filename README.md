@@ -38,7 +38,9 @@ npm install
 Finally, build then serve the generated dist folder : 
 ```
 npm run build
-npm serve dist // require serve package, serve by default at 3000
+serve dist // require serve package, serve by default at 3000
 OR
-npm run preview // serve at 4173
+vite preview // serve at 4173
 ```
+
+Open [http://localhost:3000/](http://localhost:3000) OR [http://localhost:4173/](http://localhost:4173)
