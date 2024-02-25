@@ -43,4 +43,5 @@ OR
 vite preview // serve at 4173
 ```
 
+### Run
 Open [http://localhost:3000/](http://localhost:3000) OR [http://localhost:4173/](http://localhost:4173)
