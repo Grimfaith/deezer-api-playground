@@ -192,6 +192,12 @@ function initUserFlow(userID: number) : void {
     })
 }
 
+/**
+ * Initializes user playlists section and renders them on the page.
+ *
+ * @param {string} access_token
+ * @returns {void}
+ */
 function initUserPlaylists(access_token: string) : void {
     ApiHelper.getUserPlaylists(access_token).then(data => {
         if (data) {
@@ -228,6 +234,13 @@ function initUserPlaylists(access_token: string) : void {
     })
 }
 
+/**
+ * Creates a playlist HTML element based on the provided playlist and tracklist
+ *
+ * @param {IPlaylist} playlist
+ * @param {string[][]} tracklist
+ * @return {HTMLElement}
+ */
 function createPlaylistElement(playlist: IPlaylist, tracklist: string[][]) : HTMLElement {
     const exportFileName = `${playlist.title}-by-${playlist.creator.name}`
     const playlistElement = document.createElement('div')
