@@ -28,6 +28,14 @@ export function arrayToCsv (data : string[][]) : string  {
     return URL.createObjectURL(blob)
 }
 
+/**
+ * Converts a 2D array to an Excel file and saves it locally
+ *
+ * @param {string[][]} data
+ * @param {string} sheetName
+ *
+ * @return {void}
+ */
 export function arrayToExcel(data : string[][], sheetName: string) : void {
     const worksheet = XLSX.utils.aoa_to_sheet(data)
     const workbook = XLSX.utils.book_new()
