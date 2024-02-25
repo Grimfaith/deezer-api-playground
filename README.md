@@ -37,7 +37,7 @@ npm install
 
 Finally, build then serve the generated dist folder : 
 ```
-npm build
+npm run build
 npm serve dist // require serve package, serve by default at 3000
 OR
 npm run preview // serve at 4173
