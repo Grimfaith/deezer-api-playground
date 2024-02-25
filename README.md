@@ -8,6 +8,7 @@ To run this project, you need **API Keys** from Deezer.
 - Start by creating a **[Deezer developer account](https://developers.deezer.com/)** if you don't already have one.
 - Then, create a new app to obtain the follow data in your Deezer app settings : *app_name*, *app_id*, 
 *app_secret_key*.
+- Edit the app settings and set  localhost as domain.
 
 Make also sure you have [Node.js](https://nodejs.org/) installed on your machine.
 
@@ -38,11 +39,9 @@ npm install
 Finally, build then serve the generated dist folder : 
 ```codeowners
 npm run build
-serve dist // require serve package, serve by default at 3000
-OR
-vite preview // serve at 4173
+vite // serve at 5173 by default
 ```
 
 
 ### Run
-Open [http://localhost:3000/](http://localhost:3000) OR [http://localhost:4173/](http://localhost:4173)
+Open [http://localhost:5173/](http://localhost:5173)
