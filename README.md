@@ -8,7 +8,7 @@ To run this project, you need **API Keys** from Deezer.
 - Start by creating a **[Deezer developer account](https://developers.deezer.com/)** if you don't already have one.
 - Then, create a new app to obtain the follow data in your Deezer app settings : *app_name*, *app_id*, 
 *app_secret_key*.
-- Edit the app settings and set  localhost as domain.
+- Edit the app settings and set localhost as application domain.
 
 Make also sure you have [Node.js](https://nodejs.org/) installed on your machine.
 
