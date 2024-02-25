@@ -33,7 +33,6 @@ export function arrayToCsv (data : string[][]) : string  {
  *
  * @param {string[][]} data
  * @param {string} sheetName
- *
  * @return {void}
  */
 export function arrayToExcel(data : string[][], sheetName: string) : void {

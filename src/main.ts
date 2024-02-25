@@ -206,7 +206,6 @@ function initUserPlaylists(access_token: string) : void {
 
             data.forEach(async playlist => {
                 const playlistTracks = await ApiHelper.getPlaylistTracks(access_token, playlist.id)
-                const playlistElement = document.createElement('div')
                 const tracklist = [['Title', 'Artist', 'Album', 'Link']]
 
                 playlistTracks?.forEach(track => {
@@ -218,25 +217,7 @@ function initUserPlaylists(access_token: string) : void {
                     ])
                 })
 
-                playlistElement.classList.add('playlist')
-                playlistElement.innerHTML = `
-                    <div class="title">${playlist.title}</div>
-                    <div class="nb-tracks">${playlist.nb_tracks} tracks</div>
-                    <div class="buttons">
-                        <a href="${playlist.link}" title="Open in Deezer" target="_blank">
-                            <i class="fa-solid fa-square-up-right"></i>
-                        </a>
-                        <a href="${Utils.arrayToCsv(tracklist)}" title="Export to CSV" 
-                            download="${playlist.title}-by-${playlist.creator.name}.csv">
-                            <i class="fa-solid fa-file-csv"></i>
-                        </a>
-                        <a href="${Utils.arrayToCsv(tracklist)}" title="Export to CSV" 
-                            download="${playlist.title}-by-${playlist.creator.name}.csv">
-                            ${excelSvg}
-                        </a>
-                    </div>
-                `
-
+                const playlistElement = createPlaylistElement(playlist, tracklist)
                 playlists.append(playlistElement)
             })
 
@@ -245,4 +226,42 @@ function initUserPlaylists(access_token: string) : void {
             mainSection?.append(playlistsSection)
         }
     })
+}
+
+function createPlaylistElement(playlist: IPlaylist, tracklist: string[][]) : HTMLElement {
+    const exportFileName = `${playlist.title}-by-${playlist.creator.name}`
+    const playlistElement = document.createElement('div')
+
+    playlistElement.classList.add('playlist')
+    playlistElement.innerHTML = `
+        <div class="title">${playlist.title}</div>
+        <div class="nb-tracks">${playlist.nb_tracks} tracks</div>
+    `
+
+    const playListButtons = document.createElement('div')
+    playListButtons.classList.add("buttons")
+
+    const openInDzBtn = document.createElement("a")
+    openInDzBtn.innerHTML = '<i class="fa-solid fa-square-up-right"></i>'
+    openInDzBtn.title = "Open in Deezer"
+    openInDzBtn.target = "_blank"
+    openInDzBtn.href = playlist.link
+
+    const csvDlBtn = document.createElement("a")
+    csvDlBtn.innerHTML = '<i class="fa-solid fa-file-csv"></i>'
+    csvDlBtn.title = "Export to CSV"
+    csvDlBtn.download = `${exportFileName}.csv`
+    csvDlBtn.href = Utils.arrayToCsv(tracklist)
+
+    const xlsxDlBtn = document.createElement("a")
+    xlsxDlBtn.innerHTML = excelSvg;
+    xlsxDlBtn.title = "Export to Excel"
+    xlsxDlBtn.addEventListener('click', function () {
+        Utils.arrayToExcel(tracklist, exportFileName)
+    })
+
+    playListButtons.append(openInDzBtn, csvDlBtn, xlsxDlBtn)
+    playlistElement.append(playListButtons)
+
+    return playlistElement
 }
