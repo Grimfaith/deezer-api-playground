@@ -39,7 +39,7 @@ npm install
 Finally, build then serve the generated dist folder : 
 ```codeowners
 npm run build
-vite serve // serve at 5173 by default
+vite serve
 ```
 
 
