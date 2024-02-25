@@ -2,6 +2,7 @@ import * as Utils from'./utils'
 import * as ApiHelper from'./apiHelper'
 import '@fortawesome/fontawesome-free/css/all.css'
 import './style.css'
+import excelSvg from './img/excel.svg?raw'
 
 let appState : IAppState = {
     name : 'DeezerAPG',
@@ -228,6 +229,10 @@ function initUserPlaylists(access_token: string) : void {
                         <a href="${Utils.arrayToCsv(tracklist)}" title="Export to CSV" 
                             download="${playlist.title}-by-${playlist.creator.name}.csv">
                             <i class="fa-solid fa-file-csv"></i>
+                        </a>
+                        <a href="${Utils.arrayToCsv(tracklist)}" title="Export to CSV" 
+                            download="${playlist.title}-by-${playlist.creator.name}.csv">
+                            ${excelSvg}
                         </a>
                     </div>
                 `
