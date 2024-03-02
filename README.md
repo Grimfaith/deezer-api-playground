@@ -39,7 +39,7 @@ npm install
 Finally, build then serve the generated dist folder : 
 ```codeowners
 npm run build
-vite serve
+npm run start
 ```
 
 Open [http://localhost:5173/](http://localhost:5173)
