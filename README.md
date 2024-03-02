@@ -42,6 +42,4 @@ npm run build
 vite serve
 ```
 
-
-### Run
 Open [http://localhost:5173/](http://localhost:5173)
