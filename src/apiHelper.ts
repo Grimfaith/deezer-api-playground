@@ -1,11 +1,11 @@
 import app_config from './app_config.env.json'
 
 const host= import.meta.env.DEV ? {
-    login : `${window.location.origin}/dz-login/`,
-    api : `${window.location.origin}/dz-api/`
+    login : `${window.location.origin}/dz-login`,
+    api : `${window.location.origin}/dz-api`
 } : {
-    login : 'https://connect.deezer.com/oauth/',
-    api : 'https://api.deezer.com/'
+    login : 'https://connect.deezer.com/oauth',
+    api : 'https://api.deezer.com'
 }
 
 /**
@@ -61,7 +61,7 @@ export async function generateAccessToken(code: string) : Promise<IAccess_Token 
  * @throws {Error}
  */
 export async function getUserData(access_token: string) : Promise<IUser | null> {
-    const userEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/me`)
+    const userEndpoint : URL = new URL(`${host.api}/user/me`)
     userEndpoint.searchParams.set("access_token", access_token)
 
     try {
@@ -82,7 +82,7 @@ export async function getUserData(access_token: string) : Promise<IUser | null> 
  * @throws {Error}
  */
 export async function getUserFlow(userID: number) : Promise<Array<ITrack> | null> {
-    const flowEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/${userID}/flow`)
+    const flowEndpoint : URL = new URL(`${host.api}/user/${userID}/flow`)
 
     try {
         const response : Response = await fetch(flowEndpoint.toString())
@@ -103,7 +103,7 @@ export async function getUserFlow(userID: number) : Promise<Array<ITrack> | null
  * @throws {Error}
  */
 export async function getUserPlaylists(access_token: string) : Promise<Array<IPlaylist> | null> {
-    const playlistsEndpoint : URL = new URL(`${window.location.origin}/dz-api/user/me/playlists`)
+    const playlistsEndpoint : URL = new URL(`${host.api}/user/me/playlists`)
     playlistsEndpoint.searchParams.set("access_token", access_token)
 
     try {
@@ -125,7 +125,7 @@ export async function getUserPlaylists(access_token: string) : Promise<Array<IPl
  * @return {Promise<Array<ITrack> | null>}
  */
 export async function getPlaylistTracks(access_token: string, playlistID: number) : Promise<Array<ITrack> | null> {
-    const playlistTracksEndpoint : URL = new URL(`${window.location.origin}/dz-api/playlist/${playlistID}/tracks`)
+    const playlistTracksEndpoint : URL = new URL(`${host.api}/playlist/${playlistID}/tracks`)
     playlistTracksEndpoint.searchParams.set("access_token", access_token)
     playlistTracksEndpoint.searchParams.set("limit", "667")
 
@@ -148,7 +148,7 @@ export async function getPlaylistTracks(access_token: string, playlistID: number
  * @throws {Error}
  */
 export async function getOEmbed(url: string) : Promise<object | null> {
-    const oEmbedEndpoint : URL = new URL(`${window.location.origin}/dz-api/oembed`)
+    const oEmbedEndpoint : URL = new URL(`${host.api}/oembed`)
     oEmbedEndpoint.searchParams.set("url", url)
 
     try {
