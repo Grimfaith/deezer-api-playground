@@ -85,8 +85,8 @@ export async function getUserFlow(userID: number) : Promise<Array<ITrack> | null
     try {
         const response : Response = await fetch(flowEndpoint.toString())
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
-        let flow =  await response.json()
-        return flow.data
+        const { data } = await response.json()
+        return data
     } catch (error) {
         console.error('Error fetching user flow : ', error)
         return null
@@ -107,8 +107,8 @@ export async function getUserPlaylists(access_token: string) : Promise<Array<IPl
     try {
         const response : Response = await fetch(playlistsEndpoint.toString())
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
-        let playlists =  await response.json()
-        return playlists.data
+        const { data } = await response.json()
+        return data
     } catch (error) {
         console.error('Error fetching playlists : ', error)
         return null
@@ -130,8 +130,8 @@ export async function getPlaylistTracks(access_token: string, playlistID: number
     try {
         const response : Response = await fetch(playlistTracksEndpoint.toString())
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
-        let tracks =  await response.json()
-        return tracks.data
+        const { data } = await response.json()
+        return data
     } catch (error) {
         console.error('Error fetching playlist tracks : ', error)
         return null
