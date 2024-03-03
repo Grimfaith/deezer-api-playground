@@ -14,10 +14,5 @@ export default defineConfig({
                 rewrite: (path: { replace: (arg0: string, arg1: string) => any }) => path.replace('/dz-api/', '')
             }
         }
-    },
-    build: {
-        watch: {
-            include: ['src/**', 'index.html']
-        },
-    },
+    }
 })

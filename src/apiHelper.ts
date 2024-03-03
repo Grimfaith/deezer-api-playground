@@ -1,11 +1,8 @@
 import app_config from './app_config.env.json'
 
-const host= import.meta.env.DEV ? {
+const host= {
     login : `${window.location.origin}/dz-login`,
     api : `${window.location.origin}/dz-api`
-} : {
-    login : 'https://connect.deezer.com/oauth',
-    api : 'https://api.deezer.com'
 }
 
 /**
