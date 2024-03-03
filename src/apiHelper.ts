@@ -1,11 +1,5 @@
 import app_config from './app_config.env.json'
 
-const endpoints = {
-    login : "https://connect.deezer.com/oauth/auth.php",
-    token : "https://connect.deezer.com/oauth/access_token.php",
-    api : "https://api.deezer.com",
-}
-
 /**
  * Opens the login window for Deezer authentication
  *
@@ -16,7 +10,7 @@ export function openLoginWindow(loginWindow: Window | null) : Window | null {
     const perms : string = "email,offline_access,manage_library"
     const winFeatures: string = 'left=400,top=250,width=620,height=320'
 
-    const authEndpoint : URL = new URL(endpoints.login)
+    const authEndpoint : URL = new URL(`${window.location.origin}/dz-login/auth.php`)
     authEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
     authEndpoint.searchParams.set("redirect_uri", window.location.origin)
     authEndpoint.searchParams.set("perms", perms)
@@ -35,7 +29,7 @@ export function openLoginWindow(loginWindow: Window | null) : Window | null {
  * @throws {Error}
  */
 export async function generateAccessToken(code: string) : Promise<IAccess_Token | null> {
-    const tokenEndpoint : URL = new URL(`${window.location.origin}/dz-login/token`)
+    const tokenEndpoint : URL = new URL(`${window.location.origin}/dz-login/access_token.php`)
     tokenEndpoint.searchParams.set("app_id", app_config.deezer.app_id)
     tokenEndpoint.searchParams.set("secret", app_config.deezer.app_secret_key)
     tokenEndpoint.searchParams.set("code", code)
