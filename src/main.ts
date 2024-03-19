@@ -25,10 +25,6 @@ window.addEventListener("message", (event) => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
-    mainSection = document.createElement('main')
-    mainSection.innerHTML = `<h1><strong>Deezer</strong> API Playground</h1>`
-    document.body.appendChild(mainSection)
-
     initProfileSection()
 })
 
@@ -49,45 +45,15 @@ function loginMessageHandler(event : MessageEvent<any>) : void {
                     appState.loginStatus.token = token
                     // @ts-ignore
                     event.source.postMessage(appState, event.origin)
+                    saveToken(token)
                 } else console.log('Failed to get access token with code ' + code)
             })
         }
     } else {
         appState.loginStatus = event.data.loginStatus
+        console.log(appState.loginStatus.token.expires)
+
         updateProfileSection(appState.loginStatus.token.access_token)
-    }
-}
-
-/**
- * Handles the login step
- * Checks if the user is logged in or if there are query parameters with code
- *
- * @return {void}
- */
-function initProfileSection() : void {
-    if (Utils.checkQueryParams('code')) {
-        mainSection!.innerHTML = `
-                <h1><strong>Deezer</strong> API Playground</h1>
-                <section class="profile">
-                    <p style="margin: 0">Connected.. redirection in 2s</p>
-                </section>
-            `
-    } else {
-        profileSection = document.createElement('section')
-        profileSection.classList.add('profile')
-        profileSection.innerHTML = `
-            <p>Start by log in</p>
-            <div class="profile-btn">
-                <a href="#" class="btn dz-login">Login</a>
-            </div>
-        `
-        mainSection?.appendChild(profileSection)
-
-        const loginButton = profileSection.querySelector<HTMLAnchorElement>('.dz-login')
-        loginButton?.addEventListener('click', () => {
-            loginWindow = ApiHelper.openLoginWindow(loginWindow)
-            checkLoginStatus()
-        })
     }
 }
 
@@ -104,6 +70,73 @@ function checkLoginStatus() : void {
 }
 
 /**
+ * Save the session token to local storage
+ *
+ * @returns {void}
+ */
+function saveToken(token: IAccess_Token) : void {
+    const data = {
+        value: token.access_token,
+        expires: new Date().getTime() * token.expires
+    }
+    localStorage.setItem(appState.name, JSON.stringify(data));
+}
+
+/**
+ * Handles the login step
+ * Checks if the user is logged in or if there are query parameters with code
+ *
+ * @return {void}
+ */
+function initProfileSection() : void {
+    if(!mainSection) {
+        mainSection = document.createElement('main')
+        mainSection.innerHTML = `<h1><strong>Deezer</strong> API Playground</h1>`
+        document.body.appendChild(mainSection)
+    }
+
+    if (Utils.checkQueryParams('code')) {
+        mainSection.innerHTML = `
+                <h1><strong>Deezer</strong> API Playground</h1>
+                <section class="profile">
+                    <p style="margin: 0">Connected.. redirection in 2s</p>
+                </section>
+            `
+    } else {
+        let savedToken = localStorage.getItem(appState.name)
+
+        if(savedToken) {
+            const token = JSON.parse(savedToken)
+            if(token.expires < new Date().getTime()) {
+                localStorage.removeItem(appState.name)
+                savedToken = null
+            }
+        }
+
+        if(!savedToken) {
+            profileSection = document.createElement('section')
+            profileSection.classList.add('profile')
+            profileSection.innerHTML = `
+            <p>Start by log in</p>
+            <div class="profile-btn">
+                <a href="#" class="btn dz-login">Login</a>
+            </div>
+        `
+            mainSection.appendChild(profileSection)
+
+            const loginButton = profileSection.querySelector<HTMLAnchorElement>('.dz-login')
+            loginButton!.addEventListener('click', () => {
+                loginWindow = ApiHelper.openLoginWindow(loginWindow)
+                checkLoginStatus()
+            })
+        } else {
+            const token = JSON.parse(savedToken)
+            updateProfileSection(token.value)
+        }
+    }
+}
+
+/**
  * Updates the login section with the user data
  * and sets the logout and the flow button action
  *
@@ -112,7 +145,15 @@ function checkLoginStatus() : void {
 function updateProfileSection (access_token: string) : void {
     ApiHelper.getUserData(access_token).then(userData => {
         if (userData) {
-            profileSection!.innerHTML = `
+            console.log(userData)
+
+            if(!profileSection) {
+                profileSection = document.createElement('section')
+                profileSection.classList.add('profile')
+                mainSection?.appendChild(profileSection)
+            }
+
+            profileSection.innerHTML = `
                 <div class="profile-pic">
                     <img src="${userData.picture}" alt="profile picture">
                 </div>
@@ -123,7 +164,7 @@ function updateProfileSection (access_token: string) : void {
                 </div>
             `
 
-            const flowButton = profileSection!.querySelector<HTMLAnchorElement>('.dz-flow')
+            const flowButton = profileSection.querySelector<HTMLAnchorElement>('.dz-flow')
             flowButton?.addEventListener('click', () => {
                 if (flowSection!.style.display === 'none') {
                     flowSection!.style.display = 'grid'
