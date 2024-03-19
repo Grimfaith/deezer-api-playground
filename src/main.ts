@@ -83,6 +83,22 @@ function saveToken(token: IAccess_Token) : void {
 }
 
 /**
+ * Check if token has expires
+ *
+ * @returns {boolean}
+ */
+function isTokenValid(token_: string | null) : boolean {
+    if(!token_) return false
+    else {
+        const token = JSON.parse(token_)
+        if(token.expires < new Date().getTime()) {
+            localStorage.removeItem(appState.name)
+            return false
+        } else return true
+    }
+}
+
+/**
  * Handles the login step
  * Checks if the user is logged in or if there are query parameters with code
  *
@@ -104,14 +120,7 @@ function initProfileSection() : void {
             `
     } else {
         let savedToken = localStorage.getItem(appState.name)
-
-        if(savedToken) {
-            const token = JSON.parse(savedToken)
-            if(token.expires < new Date().getTime()) {
-                localStorage.removeItem(appState.name)
-                savedToken = null
-            }
-        }
+        savedToken = isTokenValid(savedToken) ? savedToken : null
 
         if(!savedToken) {
             profileSection = document.createElement('section')
