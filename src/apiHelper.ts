@@ -12,7 +12,7 @@ const host= {
  * @returns {Window | null}
  */
 export function openLoginWindow(loginWindow: Window | null) : Window | null {
-    const perms : string = "email,offline_access,manage_library"
+    const perms : string = "email,manage_library"
     const winFeatures: string = 'left=400,top=250,width=620,height=320'
 
     const authEndpoint : URL = new URL(`${host.login}/auth.php`)
